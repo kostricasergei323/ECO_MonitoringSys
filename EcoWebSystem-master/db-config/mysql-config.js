@@ -1,13 +1,13 @@
 const mysql = require('mysql');
 const pool = mysql.createPool({
   multipleStatements: true,
-  connectTimeout  : 60 * 60 * 1000,
-  acquireTimeout  : 60 * 60 * 1000,
-  timeout         : 60 * 60 * 1000,
-  host: '195.54.163.42',
-  user: 'h34471c_All',
-  password: 'Keem_Kpi',
-  database: 'h34471c_Work',
+  connectTimeout: 60 * 60 * 1000,
+  acquireTimeout: 60 * 60 * 1000,
+  timeout: 60 * 60 * 1000,
+  host: 'keem.com.ua',
+  user: 'Keem_Magistr',
+  password: 'KeEm_MaGiStR2022',
+  database: 'KEEM_Magistr',
   port: '3306',
 });
 

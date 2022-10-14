@@ -1,6 +1,6 @@
 import React, { createRef, useEffect, useState } from 'react';
 import { Button, Navbar } from 'react-bootstrap';
-import { Map as LeafletMap, TileLayer } from 'react-leaflet';
+import { MapContainer as LeafletMap, TileLayer } from 'react-leaflet';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {

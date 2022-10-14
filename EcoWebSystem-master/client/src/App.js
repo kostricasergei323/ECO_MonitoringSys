@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import './App.css';
-import { MenuView } from './components/menu/menu.jsx';
-import { AdvancedMap } from "./components/advancedmap/advancedmap.jsx";
+import { AdvancedMap } from './components/advancedmap/advancedmap.jsx';
+import { Dictionary } from './components/dictionary/dictionary.jsx';
 import { Home } from './components/home/home.jsx';
 import { MapView } from './components/map/map.jsx';
-import { Dictionary } from './components/dictionary/dictionary.jsx';
+import { MenuView } from './components/menu/menu.jsx';
 
-import { get } from './utils/httpService';
 import { ENVIRONMENTS_URL } from './utils/constants';
+import { get } from './utils/httpService';
 
 import {
   EnvironmentsInfoContext,
@@ -50,22 +50,15 @@ export const App = () => {
             dictionary={dictionary}
             setDictionary={setDictionary}
           />
-          <Switch>
-            <Route exact path='/' component={Home} />
-            <Route path='/earth' component={() => <MapView user={user} />} />
+          <Routes>
+            <Route exact path='/' element={<Home />} />
+            <Route path='/earth' element={<MapView user={user} />} />
             <Route
               path='/dictionary'
-              component={() => (
-                <Dictionary user={user} tableName={dictionary} />
-              )}
+              element={<Dictionary user={user} tableName={dictionary} />}
             />
-            <Route
-              path='/advancedmap'
-              component={()=>(
-                <AdvancedMap user={user}/>
-              )}
-            />
-          </Switch>
+            <Route path='/advancedmap' element={<AdvancedMap user={user} />} />
+          </Routes>
         </EnvironmentsInfoContext.Provider>
       </div>
     </Router>
