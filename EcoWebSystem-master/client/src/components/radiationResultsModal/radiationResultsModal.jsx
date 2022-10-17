@@ -76,9 +76,9 @@ export const RadiationResultsModal = ({ id, onHide, show }) => {
                 />
                 {shouldShowTable(radiationCalculations.inhalationRecords) && (
                   <Card.Body
-                    style={cardStyles}
                     className='ag-theme-alpine'
                     style={{
+                      ...cardStyles,
                       height: '200px',
                     }}
                   >
@@ -106,9 +106,9 @@ export const RadiationResultsModal = ({ id, onHide, show }) => {
                 />
                 {shouldShowTable(radiationCalculations.waterRecords) && (
                   <Card.Body
-                    style={cardStyles}
                     className='ag-theme-alpine'
                     style={{
+                      ...cardStyles,
                       height: '200px',
                     }}
                   >
@@ -140,9 +140,9 @@ export const RadiationResultsModal = ({ id, onHide, show }) => {
                 />
                 {shouldShowTable(radiationCalculations.productRecords) && (
                   <Card.Body
-                    style={cardStyles}
                     className='ag-theme-alpine'
                     style={{
+                      ...cardStyles,
                       height: '200px',
                     }}
                   >
@@ -174,9 +174,9 @@ export const RadiationResultsModal = ({ id, onHide, show }) => {
                 />
                 {shouldShowTable(radiationCalculations.soilRecords) && (
                   <Card.Body
-                    style={cardStyles}
                     className='ag-theme-alpine'
                     style={{
+                      ...cardStyles,
                       height: '200px',
                     }}
                   >
@@ -208,9 +208,9 @@ export const RadiationResultsModal = ({ id, onHide, show }) => {
                 />
                 {shouldShowTable(radiationCalculations.externalResult) && (
                   <Card.Body
-                    style={cardStyles}
                     className='ag-theme-alpine'
                     style={{
+                      ...cardStyles,
                       height: '200px',
                     }}
                   >

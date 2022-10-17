@@ -7,9 +7,8 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  ResponsiveContainer
+  ResponsiveContainer,
 } from 'recharts';
-
 
 export const EmissionLineChart = ({ emissions }) => {
   const [elementName, setElementName] = React.useState('');
@@ -21,7 +20,7 @@ export const EmissionLineChart = ({ emissions }) => {
   return (
     <div>
       {Object.keys(emissions).length > 0 && (
-        <Dropdown className='mr-2 mb-2'>
+        <Dropdown className='me-2 mb-2'>
           <Dropdown.Toggle size='md'>
             {elementName || 'Оберіть елемент'}
           </Dropdown.Toggle>
@@ -43,7 +42,7 @@ export const EmissionLineChart = ({ emissions }) => {
         </Dropdown>
       )}
       {Object.keys(emissions).length > 0 && elementName && (
-        <ResponsiveContainer width="100%" height={200}>
+        <ResponsiveContainer width='100%' height={200}>
           <LineChart
             width={400}
             height={200}

@@ -112,12 +112,8 @@ export const SubmitForm = ({ onSave, preloadedEmission, isLoading }) => {
   useEffect(() => {
     if (preloadedEmission) {
       try {
-        const {
-          date,
-          elementName,
-          maximumValue,
-          averageValue,
-        } = preloadedEmission;
+        const { date, elementName, maximumValue, averageValue } =
+          preloadedEmission;
 
         const formattedDate = `${date.getFullYear()}-${(
           '0' +
@@ -149,16 +145,17 @@ export const SubmitForm = ({ onSave, preloadedEmission, isLoading }) => {
       </div>
       {isActive && (
         <>
-          <Form.Group>
+          <Form.Group className='mb-1'>
             <Form.Label>Оберіть дату</Form.Label>
             <Form.Control
               type='date'
               value={date}
+              lang='uk'
               onChange={(e) => handleDate(e.target.value)}
             />
           </Form.Group>
 
-          <Form.Group>
+          <Form.Group className='mb-1'>
             <Form.Label>Введіть середнє значення</Form.Label>
             <Form.Control
               type='number'
@@ -173,7 +170,7 @@ export const SubmitForm = ({ onSave, preloadedEmission, isLoading }) => {
             </Alert>
           )}
 
-          <Form.Group>
+          <Form.Group className='mb-1'>
             <Form.Label>Введіть максимальне значення</Form.Label>
             <Form.Control
               type='number'
@@ -188,13 +185,13 @@ export const SubmitForm = ({ onSave, preloadedEmission, isLoading }) => {
             </Alert>
           )}
 
-          <Form.Group>
+          <Form.Group className='mb-1'>
             <Dropdown>
               <Dropdown.Toggle size='sm' variant='success'>
                 {selectedElement.short_name}
               </Dropdown.Toggle>
               <Dropdown.Menu className='form-dropdown'>
-                {elements.length &&
+                {elements.length > 0 &&
                   elements.map((element) => (
                     <Dropdown.Item
                       key={element.code}
@@ -208,7 +205,7 @@ export const SubmitForm = ({ onSave, preloadedEmission, isLoading }) => {
           </Form.Group>
 
           {measure && (
-            <Form.Group>
+            <Form.Group className='mb-1'>
               <Form.Label>Розмірність</Form.Label>
               <Form.Control type='input' disabled value={measure} />
             </Form.Group>

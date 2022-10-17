@@ -318,7 +318,7 @@ export const AddRadiationPointModal = ({
             }}
           >
             <Form.Group>
-              <div>Загрузити дані із Excel</div>
+              <div>Зчитати дані з листа Excel</div>
               <input
                 type='file'
                 accept='.csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel, text/plain'
@@ -380,7 +380,7 @@ export const AddRadiationPointModal = ({
                   </Dropdown>
                 </Form.Group>
                 <Form.Group>
-                  <Form.Label>Введіть імя обєкту</Form.Label>
+                  <Form.Label>Введіть імʼя обʼєкту</Form.Label>
                   <Form.Control
                     type='input'
                     value={name}
@@ -388,7 +388,7 @@ export const AddRadiationPointModal = ({
                   />
                 </Form.Group>
                 <Form.Group>
-                  <Form.Label>Введіть опис обєкту</Form.Label>
+                  <Form.Label>Введіть опис обʼєкту</Form.Label>
                   <Form.Control
                     as='textarea'
                     rows='3'

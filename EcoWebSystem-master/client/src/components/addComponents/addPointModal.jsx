@@ -258,7 +258,7 @@ export const AddPointModal = ({
     >
       <Form>
         <Form.Group>
-          <div>Загрузити дані із Excel або текстового файла</div>
+          <div>Зчитати дані з листа Excel або текстового файла</div>
           <input
             type='file'
             accept='.csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel, text/plain'
@@ -309,7 +309,7 @@ export const AddPointModal = ({
         </Form.Group>
 
         <Form.Group>
-          <Form.Label>Введіть імя</Form.Label>
+          <Form.Label>Введіть імʼя</Form.Label>
           <Form.Control
             type='input'
             value={name}

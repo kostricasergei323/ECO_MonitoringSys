@@ -46,9 +46,9 @@ const getPoints = (req, res) => {
   INNER JOIN 
     environment
   ON
-     environment.id = emissions_on_map.idEnvironment or  environment.AttachEnv = emissions_on_map.idEnvironment
+     environment.id = emissions_on_map.idEnvironment or environment.AttachEnv = emissions_on_map.idEnvironment
   WHERE 
-    environment.id = ${idEnvironment} or environment.AttachEnv =${idEnvironment}
+    environment.id = ${idEnvironment} or environment.AttachEnv = ${idEnvironment}
   ;`;
 
   //	  emissions_on_map.idEnvironment = ${idEnvironment}
@@ -67,7 +67,7 @@ const getPoints = (req, res) => {
   return pointsPromise
     .then((points) => {
       const pointsPromises = points.map(
-        ({
+        async ({
           Id,
           id_of_user,
           id_of_expert,
@@ -87,42 +87,44 @@ const getPoints = (req, res) => {
             idEnvironment,
             startDate == undefined && endDate == undefined ? 30 : undefined
           );
-          return Promise.all([emissionsOnMapPromise, iconsMapPromise]).then(
-            ([emissions, iconsMap]) => ({
-              Id,
-              id_of_user,
-              id_of_expert,
-              owner_type: {
-                id: owner_type_id,
-                name: owner_type_name,
-              },
-              coordinates: [Coord_Lat, Coord_Lng],
-              Description,
-              Name_object,
-              Image: iconsMap.get(+Type),
-              Object_Type_Id,
-              Object_Type_Name,
-              Environments: req.query.env ? req.query.env : [],
-              emissions:
-                startDate == undefined &&
-                endDate == undefined &&
-                emissions.length > 0
-                  ? emissions.filter(
-                      (el) =>
-                        el.Year === emissions[0].Year &&
-                        el.Month === emissions[0].Month &&
-                        el.day === emissions[0].day
-                    )
-                  : emissions.filter(
-                      (el) =>
-                        new Date(`${el.Year}-${el.Month}-${el.day}`) >=
-                          new Date(startDate) &&
-                        new Date(`${el.Year}-${el.Month}-${el.day}`) <=
-                          new Date(endDate)
-                    ),
-              emmissionsStats: CountEmmisionCoif(emissions, startDate, endDate),
-            })
-          );
+          const [emissions, iconsMap] = await Promise.all([
+            emissionsOnMapPromise,
+            iconsMapPromise,
+          ]);
+          return {
+            Id,
+            id_of_user,
+            id_of_expert,
+            owner_type: {
+              id: owner_type_id,
+              name: owner_type_name,
+            },
+            coordinates: [Coord_Lat, Coord_Lng],
+            Description,
+            Name_object,
+            Image: iconsMap.get(+Type),
+            Object_Type_Id,
+            Object_Type_Name,
+            Environments: req.query.env ? req.query.env : [],
+            emissions:
+              startDate == undefined &&
+              endDate == undefined &&
+              emissions.length > 0
+                ? emissions.filter(
+                    (el) =>
+                      el.Year === emissions[0].Year &&
+                      el.Month === emissions[0].Month &&
+                      el.day === emissions[0].day
+                  )
+                : emissions.filter(
+                    (el_1) =>
+                      new Date(`${el_1.Year}-${el_1.Month}-${el_1.day}`) >=
+                        new Date(startDate) &&
+                      new Date(`${el_1.Year}-${el_1.Month}-${el_1.day}`) <=
+                        new Date(endDate)
+                  ),
+            emmissionsStats: CountEmmisionCoif(emissions, startDate, endDate),
+          };
         }
       );
 

@@ -1,4 +1,5 @@
 const pool = require('../../db-config/mysql-config');
+const { noLockQuery } = require('../utils/helpers');
 
 const {
   insertEmissionOnMap,
@@ -77,7 +78,7 @@ const getPolygons = (req, res) => {
           polygonPoints,
           polygon.id_of_poligon
         );
-        
+
         return {
           poligonId: polygon.id_of_poligon,
           brushAlfa: polygon.brush_alfa,
@@ -95,22 +96,23 @@ const getPolygons = (req, res) => {
           id_of_user: polygon.id_of_user,
           user_name: polygon.user_name,
           id_of_expert: polygon.id_of_expert,
-          idEnvironment:polygon.idEnvironment,
+          idEnvironment: polygon.idEnvironment,
         };
       });
     })
     .then((mappedPolygons) => {
-      const mappedPolygonsPromises = mappedPolygons.map((polygon) => {
+      const mappedPolygonsPromises = mappedPolygons.map(async (polygon) => {
         const emissionsOnMapPromise = getEmissionsOnMap(
           SOURCE_POLYGON,
           polygon.poligonId,
           idEnvironment
         );
-        return emissionsOnMapPromise.then((emissions) => ({
+        const emissions = await emissionsOnMapPromise;
+        return {
           ...polygon,
           emissions,
-          Environments:[]
-        }));
+          Environments: [],
+        };
       });
 
       return Promise.all(mappedPolygonsPromises).then((polygons) =>
@@ -125,30 +127,39 @@ const getPolygons = (req, res) => {
     });
 };
 
-const getAdvancedPolygons = (req,res)=>{
+const getAdvancedPolygons = (req, res) => {
   const { idEnvironment } = req.query;
 
   let whereClause = {
     experts: '',
     env: '',
-    issue: ''
-  }
+    issue: '',
+  };
   if (req.query.env) {
     whereClause.env = 'and (';
-    req.query.env.forEach((el,i) => {
-      whereClause.env+= (i==req.query.env.length-1)?`emissions_on_map.idEnvironment = ${el})`:`emissions_on_map.idEnvironment = ${el} or `
+    req.query.env.forEach((el, i) => {
+      whereClause.env +=
+        i == req.query.env.length - 1
+          ? `emissions_on_map.idEnvironment = ${el})`
+          : `emissions_on_map.idEnvironment = ${el} or `;
     });
   }
   if (req.query.experts) {
     whereClause.experts = 'and (';
-    req.query.experts.forEach((el,i) => {
-      whereClause.experts+= (i==req.query.experts.length-1)?`user.id_of_expert = ${el})`:`user.id_of_expert = ${el} or `
+    req.query.experts.forEach((el, i) => {
+      whereClause.experts +=
+        i == req.query.experts.length - 1
+          ? `user.id_of_expert = ${el})`
+          : `user.id_of_expert = ${el} or `;
     });
   }
   if (req.query.issue) {
     whereClause.issue = 'and (';
-    req.query.issue.forEach((el,i) => {
-      whereClause.issue+= (i==req.query.issue.length-1)?`map_object_dependencies.id_of_ref = ${el});`:`map_object_dependencies.id_of_ref = ${el} or `
+    req.query.issue.forEach((el, i) => {
+      whereClause.issue +=
+        i == req.query.issue.length - 1
+          ? `map_object_dependencies.id_of_ref = ${el});`
+          : `map_object_dependencies.id_of_ref = ${el} or `;
     });
   }
 
@@ -171,8 +182,16 @@ const getAdvancedPolygons = (req,res)=>{
       user.id_of_expert 
     FROM poligon
       INNER JOIN user ON poligon.id_of_user = user.id_of_user
-      ${req.query.env?'INNER JOIN emissions_on_map ON poligon.id_of_poligon = emissions_on_map.idPoligon':''}
-      ${req.query.issue?'LEFT JOIN map_object_dependencies on poligon.id_of_poligon =  map_object_dependencies.id_of_object' : ''}
+      ${
+        req.query.env
+          ? 'INNER JOIN emissions_on_map ON poligon.id_of_poligon = emissions_on_map.idPoligon'
+          : ''
+      }
+      ${
+        req.query.issue
+          ? 'LEFT JOIN map_object_dependencies on poligon.id_of_poligon =  map_object_dependencies.id_of_object'
+          : ''
+      }
       WHERE poligon.type='polygon'
       ${whereClause.env}
       ${whereClause.experts}
@@ -218,7 +237,7 @@ const getAdvancedPolygons = (req,res)=>{
           polygonPoints,
           polygon.id_of_poligon
         );
-        
+
         return {
           poligonId: polygon.id_of_poligon,
           brushAlfa: polygon.brush_alfa,
@@ -236,7 +255,7 @@ const getAdvancedPolygons = (req,res)=>{
           id_of_user: polygon.id_of_user,
           user_name: polygon.user_name,
           id_of_expert: polygon.id_of_expert,
-          idEnvironment:polygon.idEnvironment,
+          idEnvironment: polygon.idEnvironment,
         };
       });
     })
@@ -245,12 +264,12 @@ const getAdvancedPolygons = (req,res)=>{
         const emissionsOnMapPromise = getEmissionsOnMap(
           SOURCE_POLYGON,
           polygon.poligonId,
-          req.query.env?req.query.env:null
+          req.query.env ? req.query.env : null
         );
         return emissionsOnMapPromise.then((emissions) => ({
           ...polygon,
           emissions,
-          Environments: req.query.env?req.query.env:[]
+          Environments: req.query.env ? req.query.env : [],
         }));
       });
 
@@ -264,7 +283,7 @@ const getAdvancedPolygons = (req,res)=>{
         message: error,
       });
     });
-}
+};
 
 const addPolygon = (req, res) => {
   const lastIdPromise = new Promise((resolve, reject) => {

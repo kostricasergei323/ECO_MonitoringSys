@@ -84,14 +84,7 @@ export const MenuView = ({ user, setUser, dictionary, setDictionary }) => {
     history('/dictionary');
   };
 
-  const isActive = (id) => {
-    const { selected } = environmentsInfo;
-    if (selected) {
-      return id === selected.id;
-    }
-
-    return false;
-  };
+  const isActive = (id) => id === environmentsInfo?.selected?.id;
 
   const navigateToHome = () => {
     setEnvironmentsInfo({
@@ -170,7 +163,7 @@ export const MenuView = ({ user, setUser, dictionary, setDictionary }) => {
           <Nav.Item className='menu_togler'>
             {user ? (
               <div className='d-flex align-items-center justify-content-center'>
-                <h5 className='mr-2 mb-0'>
+                <h5 className='me-2 mb-0'>
                   Вітаємо, {user.FIO} ({user.expert_name})
                 </h5>
                 <Button variant='outline-secondary' size='md' onClick={logOut}>

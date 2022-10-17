@@ -57,11 +57,9 @@ export const RemoveDictionaryRecord = ({
       {selectedRow && (idValue || idValue === 0) && idColumnName && (
         <div className='d-flex justify-content-center flex-column'>
           <InputGroup size='md'>
-            <InputGroup.Prepend>
-              <InputGroup.Text id='inputGroup-sizing-md'>
-                Видалити {idColumnName}:
-              </InputGroup.Text>
-            </InputGroup.Prepend>
+            <InputGroup.Text id='inputGroup-sizing-md'>
+              Видалити {idColumnName}:
+            </InputGroup.Text>
             <FormControl
               aria-label='Medium'
               aria-describedby='inputGroup-sizing-md'
@@ -71,7 +69,7 @@ export const RemoveDictionaryRecord = ({
               value={idValue}
             />
           </InputGroup>
-          <div className='col-1 mr-auto ml-auto mb-3 mt-3'>
+          <div className='col-1 me-auto ms-auto mb-3 mt-3'>
             <Button variant='danger' onClick={removeRecord}>
               Видалити
             </Button>

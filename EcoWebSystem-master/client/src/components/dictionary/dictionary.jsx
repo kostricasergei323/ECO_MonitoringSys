@@ -11,12 +11,13 @@ import { get } from '../../utils/httpService';
 
 import { AddDictionaryRecord } from '../addComponents/addDictionaryRecord';
 import { DictionaryModes } from './dictionaryModes';
-import { DICTIONARY_MODES } from '../../utils/constants';
+import { DICTIONARY_MODES, TABLE_NAMES } from '../../utils/constants';
 import { RemoveDictionaryRecord } from './removeDictionaryRecord';
 import { EditDictionaryRecord } from './editDictionaryRecord';
 import dicLegend from '../../utils/dictionaryLegend.json';
 
 import './dictionary.css';
+import { useMemo } from 'react';
 
 const mapColumns = (columns) => {
   return columns.map((columnName) => ({
@@ -28,20 +29,24 @@ const mapColumns = (columns) => {
 };
 
 export const Dictionary = ({ user, tableName }) => {
-  const url = URL_FROM_TABLE_NAME_MAP.get(tableName.toLowerCase());
-
   const [columns, setColumns] = useState([]);
   const [rows, setRows] = useState([]);
 
   const [shouldFetchData, setShouldFetchData] = useState(true);
 
+  const url = useMemo(() => {
+    setShouldFetchData(true);
+    return URL_FROM_TABLE_NAME_MAP.get(
+      tableName !== '' ? tableName.toLowerCase() : TABLE_NAMES.elements
+    );
+  }, [tableName]);
+
   const [gridOptions, setGridOptions] = useState({});
 
-  const [selectedMode, setSelectedMode] = useState(null);
+  const [selectedMode, setSelectedMode] = useState('');
   const [selectedRow, setSelectedRow] = useState(null);
-  const [shouldDeselectSelectedRows, setShouldDeselectSelectedRows] = useState(
-    false
-  );
+  const [shouldDeselectSelectedRows, setShouldDeselectSelectedRows] =
+    useState(false);
 
   useEffect(() => {
     if (shouldFetchData) {
@@ -95,14 +100,19 @@ export const Dictionary = ({ user, tableName }) => {
   return (
     <>
       <div className='container d-flex justify-content-space-between mt-4 mb-4 dictionary'>
-        <div className='col-3 text-left dictionary__modes'>
-          <div className='mb-2'>Оберіть опцію</div>
+        <div className='col-3 ps-3 text-left dictionary__modes'>
+          <div className='mb-2'>Оберіть дію:</div>
           <DictionaryModes
             setSelectedMode={setSelectedMode}
+            selectedMode={selectedMode}
             user={user}
             className='text-align-left'
           />
-          <Button variant='secondary' onClick={exportDataAsCSV}>
+          <Button
+            variant='secondary'
+            className='mt-3'
+            onClick={exportDataAsCSV}
+          >
             Експорт у CSV
           </Button>
         </div>
@@ -116,18 +126,18 @@ export const Dictionary = ({ user, tableName }) => {
         >
           {selectedMode === DICTIONARY_MODES.search && (
             <div className='row'>
-              <InputGroup size='md' className='col-9 m-auto'>
-                <InputGroup.Prepend>
-                  <InputGroup.Text id='inputGroup-sizing-md'>
-                    Пошук:
-                  </InputGroup.Text>
-                </InputGroup.Prepend>
+              <InputGroup size='md' className='col-9 m-auto w-75'>
+                <InputGroup.Text id='inputGroup-sizing-md'>
+                  Пошук:
+                </InputGroup.Text>
                 <FormControl
                   aria-label='Medium'
                   aria-describedby='inputGroup-sizing-md'
                   id='filter-text-box'
                   placeholder='Введіть пошукові дані...'
-                  onInput={({ target }) => onFilterTextBoxChanged(target.value)}
+                  onInput={({ target }) =>
+                    onFilterTextBoxChanged(target?.value ?? '')
+                  }
                 />
               </InputGroup>
             </div>

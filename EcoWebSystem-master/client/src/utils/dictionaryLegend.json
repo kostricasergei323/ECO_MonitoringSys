@@ -1,91 +1,90 @@
 [
-    {
-        "table":"elements",
-        "names":[
-            {
-                "initName":"code",
-                "newName":"Код елементу"
-            },
-            {
-                "initName":"name",
-                "newName":"Повна назва елементу"
-            },
-            {
-                "initName":"short_name",
-                "newName":"Скорочена назва елементу"
-            },
-            {
-                "initName":"measure",
-                "newName":"Одиниця виміру"
-            }
-        ]
-    },
-    {
-        "table":"gdk",
-        "names":[
-            {
-                "initName":"CodeName",
-                "newName":"Код елементу"
-            },
-            {
-                "initName":"code",
-                "newName":"Назва елементу"
-            },
-            {
-                "initName":"mpc_m_ot",
-                "newName":"Максимально допустима норма"
-            },
-            {
-                "initName":"mpc_avrg_d",
-                "newName":"Середня дневна норма"
-            },
-            {
-                "initName":"danger_class",
-                "newName":"Рівень небезпеки"
-            },
-            {
-                "initName":"environment",
-                "newName":"Код середовища"
-            },
-            {
-                "initName":"EnvironmentName",
-                "newName":"Назва середовища"
-            }
-        ]
-    },
-    {
-        "table":"environment",
-        "names":[
-            {
-                "initName":"id",
-                "newName":"ID середовища"
-            },
-            {
-                "initName":"name",
-                "newName":"Повна назва середовища"
-            },
-            {
-                "initName":"AttachEnv",
-                "newName":"Прив'язане середовище"
-            }
-        ]
-    },
-    {
-        "table":"type_of_object",
-        "names":[
-            {
-                "initName":"Id",
-                "newName":"ІD об'єкту"
-            },
-            {
-                "initName":"Name",
-                "newName":"Назва об'єкту"
-            },
-            {
-                "initName":"Image_Name",
-                "newName":"Назва зображення"
-            }
-        ]
-    }    
+  {
+    "table": "elements",
+    "names": [
+      {
+        "initName": "code",
+        "newName": "Код елементу"
+      },
+      {
+        "initName": "name",
+        "newName": "Повна назва елементу"
+      },
+      {
+        "initName": "short_name",
+        "newName": "Скорочена назва елементу"
+      },
+      {
+        "initName": "measure",
+        "newName": "Одиниця виміру"
+      }
+    ]
+  },
+  {
+    "table": "gdk",
+    "names": [
+      {
+        "initName": "CodeName",
+        "newName": "Код елементу"
+      },
+      {
+        "initName": "code",
+        "newName": "Назва елементу"
+      },
+      {
+        "initName": "mpc_m_ot",
+        "newName": "Максимально допустима норма"
+      },
+      {
+        "initName": "mpc_avrg_d",
+        "newName": "Середня дневна норма"
+      },
+      {
+        "initName": "danger_class",
+        "newName": "Рівень небезпеки"
+      },
+      {
+        "initName": "environment",
+        "newName": "Код середовища"
+      },
+      {
+        "initName": "EnvironmentName",
+        "newName": "Назва середовища"
+      }
+    ]
+  },
+  {
+    "table": "environment",
+    "names": [
+      {
+        "initName": "id",
+        "newName": "ID середовища"
+      },
+      {
+        "initName": "name",
+        "newName": "Повна назва середовища"
+      },
+      {
+        "initName": "AttachEnv",
+        "newName": "Прив'язане середовище"
+      }
+    ]
+  },
+  {
+    "table": "type_of_object",
+    "names": [
+      {
+        "initName": "Id",
+        "newName": "ID об'єкту"
+      },
+      {
+        "initName": "Name",
+        "newName": "Назва об'єкту"
+      },
+      {
+        "initName": "Image_Name",
+        "newName": "Назва зображення"
+      }
+    ]
+  }
 ]
-

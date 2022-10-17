@@ -18,7 +18,7 @@ export const Auth = (props) => {
         props.setUser(user);
         sessionStorage.setItem('user', JSON.stringify(user));
       } else {
-        alert('Incorrect login/password');
+        alert('Невірний логін / пароль');
       }
     });
   };
@@ -28,8 +28,8 @@ export const Auth = (props) => {
       <Row className='justify-content-center'>
         <Col xs={6}>
           <Form>
-            <Form.Group controlId='formUsername'>
-              <Form.Label>Логін</Form.Label>
+            <Form.Group controlId='formUsername' className='pb-2'>
+              <Form.Label>Логін:</Form.Label>
               <Form.Control
                 type='input'
                 placeholder='Введіть логін'
@@ -37,9 +37,8 @@ export const Auth = (props) => {
                 onChange={(e) => setLogin(e.target.value)}
               />
             </Form.Group>
-
             <Form.Group controlId='formBasicPassword'>
-              <Form.Label>Пароль</Form.Label>
+              <Form.Label>Пароль:</Form.Label>
               <Form.Control
                 type='password'
                 placeholder='Введіть пароль'
@@ -47,7 +46,7 @@ export const Auth = (props) => {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </Form.Group>
-            <Button variant='primary' onClick={loginUser}>
+            <Button variant='primary' className='mt-2' onClick={loginUser}>
               Увійти
             </Button>
           </Form>

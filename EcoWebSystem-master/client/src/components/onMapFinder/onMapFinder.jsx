@@ -1,12 +1,12 @@
-import React, { useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Button, Form, Row, Col, Dropdown, FormControl } from 'react-bootstrap';
 import { get } from '../../utils/httpService';
 import { PolygonFiltration } from '../map/polygonFiltration';
-import { useOnClickOutside } from "../helperComponents/outsideClick";
+import { useOnClickOutside } from '../helperComponents/outsideClick';
 
 import './onMapFinder.css';
 
-import { Pseudo } from "../helperComponents/pseudo/pseudo";
+import { Pseudo } from '../helperComponents/pseudo/pseudo';
 import axios from 'axios';
 
 const initialConst = {
@@ -44,10 +44,11 @@ const CitiesMenu = React.forwardRef(
       >
         <FormControl
           autoFocus
-          className='my-2 w-75 m-auto'
-          placeholder='Type to filter...'
+          className='my-2 m-auto'
+          placeholder='Пошук...'
           onChange={(e) => setValue(e.target.value)}
           value={value}
+          style={{ width: '90%' }}
         />
         <ul className='list-unstyled'>
           {React.Children.toArray(children).filter(
@@ -70,7 +71,7 @@ const CityFinder = ({ ViewReposition }) => {
   }, [initialConst.Cities]);
   return (
     <Form>
-      <Form.Label> Введіть назву міста </Form.Label>
+      <Form.Label>Введіть назву міста </Form.Label>
       <Dropdown>
         <Dropdown.Toggle as={CitiesToogle} id='dropdown-custom-components'>
           Оберіть місто
@@ -112,10 +113,8 @@ const CordFinder = ({ ViewReposition }) => {
 
   return (
     <Form>
-      <Form.Label> Введіть кординати </Form.Label>
-      <Row 
-        style={{width:"100%",marginLeft:"0", marginRight:"0"}}
-      >
+      <Form.Label>Введіть координати </Form.Label>
+      <Row style={{ width: '100%', marginRight: '0' }}>
         <Col>
           <Form.Control
             placeholder='Широта'
@@ -142,87 +141,87 @@ const CordFinder = ({ ViewReposition }) => {
         </Col>
       </Row>
       <Button size='sm' className='subBTN' onClick={cordHandler}>
-          {' '}
-          Знайти{' '}
+        {' '}
+        Знайти{' '}
       </Button>
     </Form>
   );
 };
 
-const AdressFinder = ({ViewReposition})=>{
-  
+const AdressFinder = ({ ViewReposition }) => {
   const [Adress, setAdress] = React.useState('');
 
   const [isInv, setIsInv] = React.useState(false);
 
   const [TempWarning, setTempWarning] = React.useState(false);
 
-  const AdreesFinderHandler = ()=>{
-
+  const AdreesFinderHandler = () => {
     if (Adress) {
       setIsInv(false);
-      axios.get(`https://nominatim.openstreetmap.org/search/?format=json&street=${Adress}&addressdetails=1&limit=1`)
-          .then(({data})=>{
-            if(data[0]){
-              ViewReposition(data[0].lat,data[0].lon,16);
-            }
-            else{
-              setTempWarning(true);
-            }
-          })
-    }
-    else{
+      axios
+        .get(
+          `https://nominatim.openstreetmap.org/search/?format=json&street=${Adress}&addressdetails=1&limit=1`
+        )
+        .then(({ data }) => {
+          if (data[0]) {
+            ViewReposition(data[0].lat, data[0].lon, 16);
+          } else {
+            setTempWarning(true);
+          }
+        });
+    } else {
       setIsInv(true);
     }
-  } 
+  };
 
-  React.useEffect(()=>{
-    if(TempWarning){
+  React.useEffect(() => {
+    if (TempWarning) {
       setTimeout(() => {
         setTempWarning(false);
       }, 3000);
     }
-  },[TempWarning])
+  }, [TempWarning]);
 
-  return(
+  return (
     <Form>
-      <Form.Label> Введіть адрессу </Form.Label>
+      <Form.Label> Введіть адресу </Form.Label>
       <Form.Control
-        placeholder="Адресса детально"
+        placeholder='Адреса детально'
         required
-        size="sm"
+        size='sm'
         isInvalid={isInv}
         onChange={(e) => {
           setAdress(e.target.value);
         }}
       />
-      <Form.Label
-        className={TempWarning?"tempWarning":"tempWarningOff"}
-      >  
-        Адресса не знайдена
+      <Form.Label className={TempWarning ? 'tempWarning' : 'tempWarningOff'}>
+        Адреса не знайдена
       </Form.Label>
       <Button size='sm' className='subBTN' onClick={AdreesFinderHandler}>
         {' '}
         Знайти{' '}
       </Button>
     </Form>
-  )
-}
+  );
+};
 
 export const FinderOnMap = ({
-  ViewReposition, 
+  ViewReposition,
   setmapMode,
   sideRightFilterOpened,
-  setRightFilterOpened
+  setRightFilterOpened,
 }) => {
   const ref = useRef();
-  useOnClickOutside(ref,()=>{setRightFilterOpened(false)});
+  useOnClickOutside(ref, () => {
+    setRightFilterOpened(false);
+  });
 
   return (
-    <div ref={ref} className={`MapFinderForm ${sideRightFilterOpened?'':'transRight'}`}>
-      <Pseudo
-        setOpened={setRightFilterOpened}
-      />
+    <div
+      ref={ref}
+      className={`MapFinderForm ${sideRightFilterOpened ? '' : 'transRight'}`}
+    >
+      <Pseudo setOpened={setRightFilterOpened} />
       <div>
         <PolygonFiltration setmapMode={setmapMode} />
         <hr></hr>
@@ -230,12 +229,8 @@ export const FinderOnMap = ({
         <hr></hr>
         <CordFinder ViewReposition={ViewReposition} />
         <hr></hr>
-        <AdressFinder ViewReposition={ViewReposition}/>
+        <AdressFinder ViewReposition={ViewReposition} />
       </div>
     </div>
   );
 };
-
-
-
-

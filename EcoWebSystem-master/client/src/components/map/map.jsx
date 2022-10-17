@@ -501,7 +501,7 @@ export const MapView = ({ user }) => {
   const MapRef = useRef(null);
 
   const ViewReposition = (lat, lon, scale = 11) => {
-    MapRef.current.leafletElement.setView({ lat, lon }, scale);
+    MapRef.current.setView({ lat, lon }, scale);
   };
 
   return (
@@ -555,7 +555,7 @@ export const MapView = ({ user }) => {
             >
               {LastDateMode
                 ? 'Режим останніх даних'
-                : 'Режим для обрання періоду забрудення'}
+                : 'Режим обрання періоду забрудення'}
             </Button>
           </div>
           {!LastDateMode && (
@@ -889,7 +889,7 @@ const FooterComponents = ({
           }}
           disabled={isAddPolygonModeEnabled || isCompareMode || isAddTubeMode}
           onClick={() => setAddPointMode(!isAddPointModeEnabled)}
-          className='ml-3'
+          className='ms-3'
         >
           {buttonText('маркер', isAddPointModeEnabled)}
         </Button>
@@ -898,7 +898,7 @@ const FooterComponents = ({
       {/* Add plygon button  */}
       {user && (
         <Button
-          className='ml-3'
+          className='ms-3'
           size='sm'
           variant={
             isAddPolygonModeEnabled ? 'outline-danger' : 'outline-primary'
@@ -930,7 +930,7 @@ const FooterComponents = ({
             marginBottom: '2px',
             marginTop: '2px',
           }}
-          className='ml-3'
+          className='ms-3'
           size='sm'
           variant='outline-success'
           onClick={finishPolygon}
@@ -942,7 +942,7 @@ const FooterComponents = ({
       {/* Add tube button  */}
       {user && (
         <Button
-          className='ml-3'
+          className='ms-3'
           size='sm'
           variant={isAddTubeMode ? 'outline-danger' : 'outline-primary'}
           style={{
@@ -974,7 +974,7 @@ const FooterComponents = ({
             marginBottom: '2px',
             marginTop: '2px',
           }}
-          className='ml-3'
+          className='ms-3'
           size='sm'
           variant='outline-success'
           onClick={finishTube}
@@ -990,7 +990,7 @@ const FooterComponents = ({
             marginBottom: '2px',
             marginTop: '2px',
           }}
-          className='ml-3'
+          className='ms-3'
           size='sm'
           variant='outline-success'
           onClick={finishCompare}
@@ -1001,7 +1001,7 @@ const FooterComponents = ({
 
       {/*  Compare some  */}
       <Button
-        className='ml-3'
+        className='ms-3'
         size='sm'
         variant={'outline-primary'}
         style={{
@@ -1086,7 +1086,7 @@ const FooterComponents = ({
             onClick={() =>
               setAddRadiationPointMode(!isAddRadiationPointModeEnabled)
             }
-            className='ml-3'
+            className='ms-3'
           >
             {buttonText('радіаційний об`єкт', isAddRadiationPointModeEnabled)}
           </Button>

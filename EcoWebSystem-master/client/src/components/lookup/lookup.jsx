@@ -69,7 +69,7 @@ const CustomMenu = React.forwardRef(
             width: '90%',
             margin: '5px auto',
           }}
-          placeholder='Type to filter...'
+          placeholder='Пошук...'
           onChange={(e) => setValue(e.target.value)}
           value={value}
         />

@@ -60,7 +60,7 @@ export const EditDictionaryRecord = ({
 
   return (
     <>
-      {selectedRow && (
+      {selectedRow ? (
         <>
           <Form
             style={{
@@ -80,7 +80,7 @@ export const EditDictionaryRecord = ({
                   <Form.Control
                     type='input'
                     placeholder={`Введіть значення для ${field}`}
-                    value={formValues[field]}
+                    value={formValues[field] ?? ''}
                     onChange={(e) => setForm(field, e.target.value)}
                   />
                 </Form.Group>
@@ -92,8 +92,7 @@ export const EditDictionaryRecord = ({
             </Button>
           )}
         </>
-      )}
-      {!selectedRow && (
+      ) : (
         <Alert className='m-auto' variant='primary'>
           Оберіть рядок для редагування
         </Alert>

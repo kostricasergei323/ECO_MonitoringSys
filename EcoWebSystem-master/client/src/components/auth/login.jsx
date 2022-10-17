@@ -4,20 +4,20 @@ import { Button } from 'react-bootstrap';
 import { Auth } from './auth';
 import { VerticallyCenteredModal } from '../modals/modal';
 
-export const Login = (props) => {
+export const Login = ({ setUser }) => {
   const [modalShow, setModalShow] = React.useState(false);
 
   return (
     <React.Fragment>
       <Button variant='primary' onClick={() => setModalShow(true)}>
-        Увійти
+        Вхід
       </Button>
       <VerticallyCenteredModal
         show={modalShow}
         onHide={() => setModalShow(false)}
-        header='Увійти до персонального акаунту'
+        header='Вхід до персонального кабінету'
       >
-        <Auth onHide={() => setModalShow(false)} setUser={props.setUser} />
+        <Auth onHide={() => setModalShow(false)} setUser={setUser} />
       </VerticallyCenteredModal>
     </React.Fragment>
   );

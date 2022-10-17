@@ -77,16 +77,18 @@ export const AddDictionaryRecord = ({ columns, url, setShouldFetchData }) => {
               <Form.Control
                 type='input'
                 placeholder={`Введіть значення для ${field}`}
-                value={formValues[field]}
+                value={formValues[field] ?? ''}
                 onChange={(e) => setForm(field, e.target.value)}
               />
             </Form.Group>
           ))}
       </Form>
       {columns.length > 0 && (
-        <Button variant='primary' onClick={addRecord} className='mb-3'>
-          Додати запис
-        </Button>
+        <div className='text-center mt-3'>
+          <Button variant='primary' onClick={addRecord} className='mb-3'>
+            Додати запис
+          </Button>
+        </div>
       )}
     </>
   );

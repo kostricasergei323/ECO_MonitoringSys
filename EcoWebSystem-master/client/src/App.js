@@ -55,7 +55,13 @@ export const App = () => {
             <Route path='/earth' element={<MapView user={user} />} />
             <Route
               path='/dictionary'
-              element={<Dictionary user={user} tableName={dictionary} />}
+              element={
+                user ? (
+                  <Dictionary user={user} tableName={dictionary} />
+                ) : (
+                  <Home />
+                )
+              }
             />
             <Route path='/advancedmap' element={<AdvancedMap user={user} />} />
           </Routes>

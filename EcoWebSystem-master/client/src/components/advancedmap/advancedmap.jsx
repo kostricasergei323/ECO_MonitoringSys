@@ -641,7 +641,7 @@ const FooterComponents = ({
     <>
       {/*  Compare some  */}
       <Button
-        className='ml-3'
+        className='ms-3'
         size='sm'
         variant={'outline-primary'}
         style={{

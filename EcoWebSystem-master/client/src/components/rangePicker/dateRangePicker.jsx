@@ -8,24 +8,28 @@ import { get } from '../../utils/httpService';
 import { useContext } from 'react';
 import { EnvironmentsInfoContext } from '../context/environmentsInfoContext';
 
-import { formParamsForGetArr } from "../../utils/helpers";
+import { formParamsForGetArr } from '../../utils/helpers';
 
-import './dateRangePicker.css'
+import './dateRangePicker.css';
 
-export const DateRangePickerView = ({ id, param, setEmissionCalculations,EnvironmentAttachment }) => {
+export const DateRangePickerView = ({
+  id,
+  param,
+  setEmissionCalculations,
+  EnvironmentAttachment,
+}) => {
   const { environmentsInfo } = useContext(EnvironmentsInfoContext);
 
   const [dateWidth, setDateWidth] = React.useState(window.innerWidth);
 
-  const handleWidth = ()=>{
+  const handleWidth = () => {
     setDateWidth(window.innerWidth);
-  } 
+  };
 
-  if (window.onresize === "function") {
+  if (window.onresize === 'function') {
     window.removeEventListener(handleWidth);
-  }
-  else{
-    window.addEventListener('resize',handleWidth);
+  } else {
+    window.addEventListener('resize', handleWidth);
   }
 
   const [state, setState] = React.useState([
@@ -39,11 +43,17 @@ export const DateRangePickerView = ({ id, param, setEmissionCalculations,Environ
   React.useEffect(() => {
     const [date] = state;
 
-    const idEnvironment = environmentsInfo.selected?environmentsInfo.selected.id:null;
-    const envParam = formParamsForGetArr(EnvironmentAttachment,'envAttach');
+    const idEnvironment = environmentsInfo.selected
+      ? environmentsInfo.selected.id
+      : null;
+    const envParam = formParamsForGetArr(EnvironmentAttachment, 'envAttach');
 
     get(
-      `${EMISSIONS_CALCULATIONS_URL}?idEnvironment=${idEnvironment}&${param}=${id}&startDate=${date.startDate.toISOString()}&endDate=${date.endDate.toISOString()}${(EnvironmentAttachment && EnvironmentAttachment.length>0)?'&'+envParam:''}`
+      `${EMISSIONS_CALCULATIONS_URL}?idEnvironment=${idEnvironment}&${param}=${id}&startDate=${date.startDate.toISOString()}&endDate=${date.endDate.toISOString()}${
+        EnvironmentAttachment && EnvironmentAttachment.length > 0
+          ? '&' + envParam
+          : ''
+      }`
     ).then(({ data }) => {
       setEmissionCalculations(data);
     });
@@ -51,7 +61,7 @@ export const DateRangePickerView = ({ id, param, setEmissionCalculations,Environ
 
   return (
     <>
-      {(dateWidth>1200)? (
+      {dateWidth > 1200 ? (
         <DateRangePicker
           locale={uk}
           onChange={(item) => setState([item.selection])}
@@ -60,15 +70,16 @@ export const DateRangePickerView = ({ id, param, setEmissionCalculations,Environ
           months={2}
           ranges={state}
           direction='horizontal'
-        />):
-      (
-        <div style={{display:"flex"}}>
+        />
+      ) : (
+        <div style={{ display: 'flex' }}>
           <DateRange
+            locale={uk}
             editableDateInputs={true}
-            onChange={item => setState([item.selection])}
+            onChange={(item) => setState([item.selection])}
             moveRangeOnFirstSelection={false}
             ranges={state}
-            className="adaptiveDateRange"
+            className='adaptiveDateRange'
           />
         </div>
       )}
@@ -80,30 +91,32 @@ export const ActualEmmisionDate = ({
   dateState,
   SetDateState,
   initilDate,
-  enabled
-}) =>{
-  
-  React.useEffect(()=>{
-    if(enabled){
-      if(dateState[0].endDate > new Date() && dateState[0].startDate > new Date()){
+  enabled,
+}) => {
+  React.useEffect(() => {
+    if (enabled) {
+      if (
+        dateState[0].endDate > new Date() &&
+        dateState[0].startDate > new Date()
+      ) {
         SetDateState(initilDate);
-      }
-      else if(dateState[0].endDate > new Date()){
+      } else if (dateState[0].endDate > new Date()) {
         dateState[0].endDate = new Date();
         SetDateState(dateState);
       }
     }
-  },[dateState])
+  }, [dateState]);
 
-  return(
-    <div style={{display:"flex"}}>
+  return (
+    <div style={{ display: 'flex' }}>
       <DateRange
+        locale={uk}
         editableDateInputs={true}
-        onChange={item => SetDateState([item.selection])}
+        onChange={(item) => SetDateState([item.selection])}
         moveRangeOnFirstSelection={false}
         ranges={dateState}
-        className="adaptiveDateRange"
+        className='adaptiveDateRange'
       />
     </div>
-  )
-}
+  );
+};

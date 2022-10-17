@@ -1,58 +1,54 @@
-import React from "react";
+import React from 'react';
 
-import "./mapLegend.css";
-import { Button } from "react-bootstrap";
+import './mapLegend.css';
+import { Button } from 'react-bootstrap';
 
-export const Legend = ({pointData,regionData,pointDesc,regionDesc}) =>{
-  const [legendTypes, setLegendTypes] = React.useState(
-    [
-      {
-        text: "Точки",
-        grades:pointData,
-        Description:pointDesc
-      },
-      {
-        text: "Області",
-        grades:regionData,
-        Description:regionDesc
-      },
-    ]
-  )
+export const Legend = ({ pointData, regionData, pointDesc, regionDesc }) => {
+  const [legendTypes, setLegendTypes] = React.useState([
+    {
+      text: 'Точки',
+      grades: pointData,
+      Description: pointDesc,
+    },
+    {
+      text: 'Області',
+      grades: regionData,
+      Description: regionDesc,
+    },
+  ]);
 
   const [chosenType, setChosen] = React.useState(0);
 
   return (
-    <div 
-      className="info legend"
-    >
+    <div className='info legend'>
       <Button
-        style={{marginBottom:4}}
-        onClick={()=>{
-          setChosen(chosenType===0?1:0)
+        style={{ marginBottom: 4 }}
+        onClick={() => {
+          setChosen(chosenType === 0 ? 1 : 0);
         }}
-      >{legendTypes[chosenType].text}</Button>
+      >
+        {legendTypes[chosenType].text}
+      </Button>
       {legendTypes[chosenType]?.Description && (
-        <div className="borderedDescription">
+        <div className='borderedDescription'>
           {legendTypes[chosenType].Description}
         </div>
       )}
       <div>
-        <i style={{background:"grey"}}/> Дані відсутні 
+        <i style={{ background: 'grey' }} /> Дані відсутні
       </div>
 
-      {legendTypes[chosenType].grades.map((el,i)=>{
-        return(
-          <div>
-            <i key={i} style={{background:`${el.color}`}}/>          
+      {legendTypes[chosenType].grades.map((el, i) => {
+        return (
+          <div key={i}>
+            <i style={{ background: `${el.color}` }} />
             <span>
-              {
-                (el.min === -Infinity? '0' : el.min) +
-                (el.max === Infinity ? "+" : "-" + el.max)
-              }
+              {(el.min === -Infinity ? '0' : el.min) +
+                (el.max === Infinity ? '+' : '-' + el.max)}
             </span>
           </div>
-        )
+        );
       })}
     </div>
-  )
-}
+  );
+};

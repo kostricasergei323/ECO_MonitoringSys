@@ -10,7 +10,10 @@ import { VerticallyCenteredModal } from '../modals/modal';
 import { SubmitForm } from '../submitForm/submitForm';
 import { useEffect } from 'react';
 import { extractRGBA } from '../../utils/helpers';
-import { getUploadedFileType, uploadedFileTypes } from '../../utils/getFileType';
+import {
+  getUploadedFileType,
+  uploadedFileTypes,
+} from '../../utils/getFileType';
 import { preparedDataPromise } from '../../utils/txtFilesService';
 
 const initialState = {
@@ -241,7 +244,7 @@ export const AddPolygonModal = ({
     >
       <Form>
         <Form.Group>
-          <div>Загрузити дані із Excel або текстового файла</div>
+          <div>Зчитати дані з листа Excel або текстового файла</div>
           <input
             type='file'
             accept='.csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel, text/plain'

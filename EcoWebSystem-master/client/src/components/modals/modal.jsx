@@ -1,14 +1,14 @@
 import React from 'react';
-import { Button, Modal } from 'react-bootstrap';
+import { Modal } from 'react-bootstrap';
 
-import "./modal.css";
+import './modal.css';
 
 export const VerticallyCenteredModal = (props) => (
   <Modal
     {...props}
-    size={props.size || 'lg'}
-    style={{zIndex:2000}}
-    dialogClassName="modalAdaptive"
+    size={props.size || 'm'}
+    style={{ zIndex: 2000 }}
+    dialogClassName='modalAdaptive'
     aria-labelledby='contained-modal-title-vcenter'
     centered
   >
@@ -17,9 +17,9 @@ export const VerticallyCenteredModal = (props) => (
         {props.header}
       </Modal.Title>
     </Modal.Header>
-    <Modal.Body>{props.children}</Modal.Body>
-    <Modal.Footer>
+    <Modal.Body style={{ gap: '15px' }}>{props.children}</Modal.Body>
+    {/* <Modal.Footer>
       <Button onClick={props.onHide}>Закрити</Button>
-    </Modal.Footer>
+    </Modal.Footer> */}
   </Modal>
 );

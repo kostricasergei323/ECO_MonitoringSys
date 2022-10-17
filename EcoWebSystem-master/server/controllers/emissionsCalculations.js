@@ -15,10 +15,9 @@ const getEmissionsCalculations = (req, res) => {
   const id = idPoi || idPolygon;
   const shouldFilterByDates = startDateISOString && endDateISOString;
 
-
   let queryForFilteringByDates;
   let idEnvironmentClause;
-  
+
   let innerLeftJoinClause;
   if (shouldFilterByDates) {
     const { stateDate, endDate } = {
@@ -28,31 +27,33 @@ const getEmissionsCalculations = (req, res) => {
     queryForFilteringByDates = `HAVING Formatted_Date >= '${stateDate}' and Formatted_Date <= '${endDate}'`;
   }
 
-  if (idEnvironment=='null' && envAttach) {
+  if (idEnvironment == 'null' && envAttach) {
     // внешний where для отборки загрязнений
     idEnvironmentClause = 'AND (';
-    envAttach.forEach((el,i) => {
+    envAttach.forEach((el, i) => {
       //idEnvironmentClause+= (i==envAttach.length-1)?`emissions_on_map.idEnvironment = ${el}) `:`emissions_on_map.idEnvironment = ${el} or `
-      idEnvironmentClause+= (i==envAttach.length-1)?`environment.AttachEnv = ${el} or environment.id = ${el}) `:`environment.AttachEnv = ${el} or environment.id = ${el} or `
+      idEnvironmentClause +=
+        i == envAttach.length - 1
+          ? `environment.AttachEnv = ${el} or environment.id = ${el}) `
+          : `environment.AttachEnv = ${el} or environment.id = ${el} or `;
     });
 
     // внутренний where для выборки gdk
     innerLeftJoinClause = 'WHERE ';
-    envAttach.forEach((el,i) => {
-      innerLeftJoinClause+= (i==envAttach.length-1)?
-        ` environment.AttachEnv = ${el} or environment.id = ${el} `
-        :
-        ` environment.AttachEnv = ${el} or environment.id = ${el} or `
+    envAttach.forEach((el, i) => {
+      innerLeftJoinClause +=
+        i == envAttach.length - 1
+          ? ` environment.AttachEnv = ${el} or environment.id = ${el} `
+          : ` environment.AttachEnv = ${el} or environment.id = ${el} or `;
     });
+  } else if (idEnvironment != 'null') {
+    idEnvironmentClause = ''; //` AND idEnvironment=${idEnvironment} `
 
-  } else if(idEnvironment!='null') {
-    idEnvironmentClause = '' //` AND idEnvironment=${idEnvironment} `
+    innerLeftJoinClause = ` WHERE environment.AttachEnv = ${idEnvironment} or environment.id = ${idEnvironment} `;
+  } else {
+    idEnvironmentClause = '';
 
-    innerLeftJoinClause =` WHERE environment.AttachEnv = ${idEnvironment} or environment.id = ${idEnvironment} `
-  }else{
-    idEnvironmentClause='';
-
-    innerLeftJoinClause='';
+    innerLeftJoinClause = '';
   }
 
   const query = `
@@ -72,7 +73,7 @@ const getEmissionsCalculations = (req, res) => {
     FROM 
       emissions_on_map
     INNER JOIN elements ON emissions_on_map.idElement = elements.code
-    left join environment on emissions_on_map.idEnvironment = environment.id or emissions_on_map.idEnvironment = environment.AttachEnv
+    LEFT JOIN environment on emissions_on_map.idEnvironment = environment.id or emissions_on_map.idEnvironment = environment.AttachEnv
     LEFT JOIN (
       select distinct gdk.code,gdk.mpc_m_ot,gdk.mpc_avrg_d,gdk.danger_class from gdk 
       left join environment on gdk.environment = environment.id or gdk.environment = environment.AttachEnv

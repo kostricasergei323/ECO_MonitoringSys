@@ -1,5 +1,5 @@
 const pool = require('../../db-config/mysql-config');
-const isEmpty = require("is-empty");
+const isEmpty = require('is-empty');
 
 const login = (req, res) => {
   const { login, password } = req.body;
@@ -11,14 +11,10 @@ const login = (req, res) => {
       user.id_of_user,
       expert.expert_name,
       expert.expert_FIO
-    FROM
-      user
-    INNER JOIN
-      expert
-    ON 
-      user.id_of_expert = expert.id_of_expert
+    FROM user
+    INNER JOIN expert ON user.id_of_expert = expert.id_of_expert
     WHERE user.user_name = '${login}' AND user.password = '${password}'
-  ;`;
+    LIMIT 1;`;
 
   return pool.query(query, [], (error, rows) => {
     if (error) {
@@ -27,18 +23,18 @@ const login = (req, res) => {
       });
     }
 
-    if(!isEmpty(rows)){
+    if (!isEmpty(rows)) {
+      const row = rows[0];
       const response = {
-        expert_name: rows[0].expert_name,
-        id_of_expert: rows[0].id_of_expert,
-        FIO: rows[0].expert_FIO,
-        id_of_user: rows[0].id_of_user,
-        user_name: rows[0].user_name,
+        expert_name: row.expert_name,
+        id_of_expert: row.id_of_expert,
+        FIO: row.expert_FIO,
+        id_of_user: row.id_of_user,
+        user_name: row.user_name,
       };
 
       return res.send(JSON.stringify(response));
-    }
-    else{
+    } else {
       return res.status(202).send();
     }
   });
