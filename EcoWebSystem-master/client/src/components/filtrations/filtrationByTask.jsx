@@ -14,37 +14,36 @@ import './filtrationByTask.css';
   ];
 */
 
-const initTitle = "Список задач";
+const initTitle = 'Список задач';
 
 export const FiltarionByTasks = ({
   filteredPoints,
   setFilteredPoints,
   setFilteredItems,
 }) => {
-
-  const [Title, setTitle] = useState(initTitle)
+  const [Title, setTitle] = useState(initTitle);
 
   const [Chosen, setChosen] = useState(null);
 
   const [Tasks, setAllTasks] = useState([]);
-  
+
   const setTasks = () => {
-    get(TASK_URL).then(({data}) => {
+    get(TASK_URL).then(({ data }) => {
       let tempTasks = [];
-      data.forEach((el)=>{
-        if(!tempTasks.some((elem)=>elem.name === el.name)){
+      data.forEach((el) => {
+        if (!tempTasks.some((elem) => elem.name === el.name)) {
           tempTasks.push({
-            name:el.name,
+            name: el.name,
             object_arr: [],
-          })
+          });
         }
-      })
-      data.forEach((el)=>{
-        let obj = tempTasks.find((elem)=>elem.name === el.name);
+      });
+      data.forEach((el) => {
+        let obj = tempTasks.find((elem) => elem.name === el.name);
         if (obj) {
           obj.object_arr.push(el.id_of_object);
         }
-      })
+      });
       setAllTasks(tempTasks);
     });
   };
@@ -52,27 +51,29 @@ export const FiltarionByTasks = ({
   const [shouldUpdate, setUpdate] = useState(false);
 
   useEffect(() => {
-    if (Tasks.length===0) {
-      setTasks()
+    if (Tasks.length === 0) {
+      setTasks();
     }
   }, []);
 
   const DropHandlerClick = (element) => {
-    let tempPoints = filteredPoints.filter(el=>{
-      if(element.object_arr.some(id=>id === el.Id)){
+    let tempPoints = filteredPoints.filter((el) => {
+      if (element.object_arr.some((id) => id === el.Id)) {
         return el;
-      };
-    })
-    if (tempPoints.length>0) {
+      }
+    });
+    if (tempPoints.length > 0) {
       setFilteredPoints(tempPoints);
       setChosen(element.name);
-      setTitle(element.name.length>12? element.name.substring(0, 10)+"...":element.name)
+      setTitle(
+        element.name.length > 12
+          ? element.name.substring(0, 10) + '...'
+          : element.name
+      );
       setUpdate(!shouldUpdate);
+    } else {
+      alert('По даній задачі нема маркерів');
     }
-    else{
-      alert("По даній задачі нема маркерів")
-    }
-
   };
 
   const ClearChosenList = () => {
@@ -110,7 +111,7 @@ export const FiltarionByTasks = ({
             )}
 
             {Tasks.map((el, index) => {
-              if(!Chosen){
+              if (!Chosen) {
                 return (
                   <Dropdown.Item
                     key={index}
@@ -122,9 +123,8 @@ export const FiltarionByTasks = ({
                     {el.name}
                   </Dropdown.Item>
                 );
-              }
-              else{
-                return (<></>)
+              } else {
+                return <></>;
               }
             })}
           </>

@@ -11,54 +11,10 @@ const getEmissionsCalculations = (req, res) => {
     startDate: startDateISOString,
     endDate: endDateISOString,
   } = req.query;
-  const typeOfObject = idPoi ? 'idPoi' : 'idPoligon';
-  const id = idPoi || idPolygon;
-  const shouldFilterByDates = startDateISOString && endDateISOString;
-
-  let queryForFilteringByDates;
-  let idEnvironmentClause;
-
-  let innerLeftJoinClause;
-  if (shouldFilterByDates) {
-    const { stateDate, endDate } = {
-      stateDate: formatDateForDatabase(startDateISOString),
-      endDate: formatDateForDatabase(endDateISOString),
-    };
-    queryForFilteringByDates = `HAVING Formatted_Date >= '${stateDate}' and Formatted_Date <= '${endDate}'`;
-  }
-
-  if (idEnvironment == 'null' && envAttach) {
-    // внешний where для отборки загрязнений
-    idEnvironmentClause = 'AND (';
-    envAttach.forEach((el, i) => {
-      //idEnvironmentClause+= (i==envAttach.length-1)?`emissions_on_map.idEnvironment = ${el}) `:`emissions_on_map.idEnvironment = ${el} or `
-      idEnvironmentClause +=
-        i == envAttach.length - 1
-          ? `environment.AttachEnv = ${el} or environment.id = ${el}) `
-          : `environment.AttachEnv = ${el} or environment.id = ${el} or `;
-    });
-
-    // внутренний where для выборки gdk
-    innerLeftJoinClause = 'WHERE ';
-    envAttach.forEach((el, i) => {
-      innerLeftJoinClause +=
-        i == envAttach.length - 1
-          ? ` environment.AttachEnv = ${el} or environment.id = ${el} `
-          : ` environment.AttachEnv = ${el} or environment.id = ${el} or `;
-    });
-  } else if (idEnvironment != 'null') {
-    idEnvironmentClause = ''; //` AND idEnvironment=${idEnvironment} `
-
-    innerLeftJoinClause = ` WHERE environment.AttachEnv = ${idEnvironment} or environment.id = ${idEnvironment} `;
-  } else {
-    idEnvironmentClause = '';
-
-    innerLeftJoinClause = '';
-  }
 
   const query = `
     SELECT
-      environment.name as envName,
+      environment.name AS envName,
       elements.short_name,
       idEnvironment,
       Year,
@@ -69,22 +25,38 @@ const getEmissionsCalculations = (req, res) => {
       elements.Measure,
       gdk.mpc_avrg_d,
       gdk.mpc_m_ot,
-      STR_TO_DATE(CONCAT(Year,'-',LPAD(Month,2,'00'),'-',LPAD(day,2,'00')), '%Y-%m-%d') as Formatted_Date
-    FROM 
-      emissions_on_map
+      STR_TO_DATE(CONCAT(Year,'-',LPAD(Month,2,'00'),'-',LPAD(day,2,'00')), '%Y-%m-%d') AS Formatted_Date
+    FROM emissions_on_map
     INNER JOIN elements ON emissions_on_map.idElement = elements.code
-    LEFT JOIN environment on emissions_on_map.idEnvironment = environment.id or emissions_on_map.idEnvironment = environment.AttachEnv
+    LEFT JOIN environment ON (emissions_on_map.idEnvironment = environment.id OR emissions_on_map.idEnvironment = environment.AttachEnv)
     LEFT JOIN (
-      select distinct gdk.code,gdk.mpc_m_ot,gdk.mpc_avrg_d,gdk.danger_class from gdk 
-      left join environment on gdk.environment = environment.id or gdk.environment = environment.AttachEnv
-              ${innerLeftJoinClause}
-             ) as gdk ON emissions_on_map.idElement = gdk.code    
+      SELECT DISTINCT gdk.code, gdk.mpc_m_ot, gdk.mpc_avrg_d, gdk.danger_class 
+      FROM gdk 
+      LEFT JOIN environment ON (gdk.environment = environment.id OR gdk.environment = environment.AttachEnv)
+      ${
+        idEnvironment === 'null' && envAttach
+          ? `WHERE (environment.AttachEnv IN (${envAttach}) OR environment.id IN (${envAttach}))`
+          : idEnvironment !== 'null'
+          ? `WHERE environment.AttachEnv = ${idEnvironment} OR environment.id = ${idEnvironment}`
+          : ''
+      }
+             ) AS gdk ON emissions_on_map.idElement = gdk.code    
     WHERE 
-      ${typeOfObject} = ${id}
-      ${idEnvironmentClause}
-      ${shouldFilterByDates ? queryForFilteringByDates : ''}
-    ;
-  `;
+      ${idPoi ? 'idPoi' : 'idPoligon'} = ${idPoi || idPolygon}
+      ${
+        idEnvironment === 'null' && envAttach
+          ? `AND (environment.AttachEnv IN (${envAttach}) OR environment.id IN (${envAttach}))`
+          : ''
+      }
+      ${
+        startDateISOString && endDateISOString
+          ? `HAVING Formatted_Date >= '${formatDateForDatabase(
+              startDateISOString
+            )}' AND Formatted_Date <= '${formatDateForDatabase(
+              endDateISOString
+            )}'`
+          : ''
+      };`;
 
   return pool.query(query, [], (error, rows) => {
     if (error) {

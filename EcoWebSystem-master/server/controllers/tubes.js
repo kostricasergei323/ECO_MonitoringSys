@@ -3,7 +3,7 @@ const pool = require('../../db-config/mysql-config');
 
 const addTube = async (req, res) => {
   let query = `
-    SET @poliId:=(select max(Id_of_poligon) from poligon)+1;
+    SET @poliId:=;
     INSERT INTO poligon(
         Id_of_poligon ,
         line_collor_r ,
@@ -15,7 +15,7 @@ const addTube = async (req, res) => {
         id_of_user ,
         type ,
         description) values(
-            @poliId,
+            (select max(Id_of_poligon) from poligon)+1,
             ${req.body.line_collor_r},
             ${req.body.line_color_g},
             ${req.body.line_color_b},
@@ -32,14 +32,11 @@ const addTube = async (req, res) => {
         longitude,
         Id_of_poligon,
         order123) values 
+        ${req.body.points.map(
+          (el) => `(${el.longitude},${el.latitude},@poliId,${el.order123})`
+        )}
     `;
 
-  req.body.points.forEach((el, i) => {
-    Points += `(${el.longitude},${el.latitude},@poliId,${el.order123})`;
-    if (req.body.points.length != i + 1) {
-      Points += ' , ';
-    }
-  });
   let resQuery = query + Points;
   pool.query(resQuery, (err) => {
     if (err) {

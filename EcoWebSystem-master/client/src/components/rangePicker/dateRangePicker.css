@@ -1,10 +1,9 @@
-.adaptiveDateRange{
-    margin: auto
+.adaptiveDateRange {
+  margin: auto;
 }
 
-@media (max-width:360px){
-    .rdrMonth{
-        width: 100%;
-    }
+@media (max-width: 360px) {
+  .rdrMonth {
+    width: 100%;
+  }
 }
-

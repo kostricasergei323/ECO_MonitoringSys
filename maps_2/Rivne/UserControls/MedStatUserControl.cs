@@ -107,10 +107,10 @@ namespace UserMap.UserControls
         /// </summary>
         private Task LoadFilteredMedStat()
         {
-            string tables = "med_stat, med_stat_param, formulas, issues";
+            string tables = "med_stat, med_stat_param_1, formulas, issues";
             string columns = "formulas.name_of_formula, formulas.description_of_formula, formulas.measurement_of_formula," +
-                             "med_stat.value, med_stat.year, issues.name, med_stat.nomer, med_stat_param.value";
-            string joinCond = "med_stat.nomer = med_stat_param.number_of_formula, " +
+                             "med_stat.value, med_stat.year, issues.name, med_stat.nomer, med_stat_param_1.value";
+            string joinCond = "med_stat.nomer = med_stat_param_1.number_of_formula, " +
                               "med_stat.id_of_formula = formulas.id_of_formula, " +
                               "med_stat.issue_id = issues.issue_id";
             StringBuilder cond = new StringBuilder("med_stat.region_id = " + regionId.ToString());
@@ -154,7 +154,7 @@ namespace UserMap.UserControls
             }
 
             cond.Append(" AND (");
-            CheckedInnerMostTreeNodesAction(MedStatIndicatorsTreeView, node => cond.Append("med_stat_param.value = ").Append(Data.DBUtil.AddQuotes(node.Text)).Append(" OR "));
+            CheckedInnerMostTreeNodesAction(MedStatIndicatorsTreeView, node => cond.Append("med_stat_param_1.value = ").Append(Data.DBUtil.AddQuotes(node.Text)).Append(" OR "));
 
             var isSNC = ConditionAmount(MedStatIndicatorsTreeView);
 
@@ -257,10 +257,10 @@ namespace UserMap.UserControls
         }
         private async Task LoadFiltrationIndicators()
         {
-            string medStatTables = "med_stat, med_stat_param";
-            string medStatColumns = "DISTINCT med_stat_param.id_of_param, med_stat.id_of_formula," +
-                                    "med_stat_param.value";
-            string medStatJoinCond = "med_stat.nomer = med_stat_param.number_of_formula";
+            string medStatTables = "med_stat, med_stat_param_1";
+            string medStatColumns = "DISTINCT med_stat_param_1.id_of_param, med_stat.id_of_formula," +
+                                    "med_stat_param_1.value";
+            string medStatJoinCond = "med_stat.nomer = med_stat_param_1.number_of_formula";
             string medStatCond = "med_stat.region_id = " + regionId.ToString();
 
             var medStatResult = await dbManager.GetRowsUsingJoinAsync(medStatTables, medStatColumns, medStatJoinCond,
@@ -276,7 +276,7 @@ namespace UserMap.UserControls
                                                    })
                                                    .ToDictionary(key => key.Key, value =>
                                                    {
-                                                       //Группируем и сортируем уже по med_stat_param.id_of_param, 
+                                                       //Группируем и сортируем уже по med_stat_param_1.id_of_param, 
                                                        // ибо на один id_of_param может быть несколько значений
                                                        var innerResult = value.GroupBy(innerKey => innerKey.Id,
                                                                                        innerValue => innerValue.Value)
@@ -315,7 +315,7 @@ namespace UserMap.UserControls
 
             await dbManager.GetRowsAsync("formulas", "DISTINCT id_of_formula, name_of_formula, " +
                                          "measurement_of_formula", formulasCond.ToString())
-                            //Т.к.  med_stat_param.id_of_param и med_stat.id_of_formula по сути представляют одно и тоже,
+                            //Т.к.  med_stat_param_1.id_of_param и med_stat.id_of_formula по сути представляют одно и тоже,
                             //то делаем соединения medStatResult с результирующим набором для сопоставления с 
                             //id_of_formula у формулы.
                             .ContinueWith(result =>
@@ -332,7 +332,7 @@ namespace UserMap.UserControls
                                 var res = typedResult.Join(medStatResult, outer => outer.Id, inner => inner.Key,
                                                       (row, inner) =>
                                                       {
-                                                          //Здесь outer.Key - med_stat_param.id_of_param, а _inner.Id - formulas.id_of_formula 
+                                                          //Здесь outer.Key - med_stat_param_1.id_of_param, а _inner.Id - formulas.id_of_formula 
                                                           var paramNames = inner.Value.Join(typedResult, outer => outer.Key,
                                                                                             _inner => _inner.Id, (param, tResult) =>
                                                                                             {
@@ -521,11 +521,11 @@ namespace UserMap.UserControls
                 return;
             }
 
-            string tables = "med_stat_param, formulas";
+            string tables = "med_stat_param_1, formulas";
             string columns = "formulas.name_of_formula, formulas.description_of_formula, " +
-                             "formulas.measurement_of_formula, med_stat_param.value";
-            string joinCond = "med_stat_param.id_of_param = formulas.id_of_formula";
-            string cond = "med_stat_param.number_of_formula = " + MedStatDataGridView.SelectedRows[0].Cells[0].Value;
+                             "formulas.measurement_of_formula, med_stat_param_1.value";
+            string joinCond = "med_stat_param_1.id_of_param = formulas.id_of_formula";
+            string cond = "med_stat_param_1.number_of_formula = " + MedStatDataGridView.SelectedRows[0].Cells[0].Value;
 
             await dbManager.GetRowsUsingJoinAsync(tables, columns, joinCond, cond, Data.JoinType.INNER)
                            .ContinueWith(result =>

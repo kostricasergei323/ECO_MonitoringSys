@@ -195,11 +195,11 @@ export const Dictionary = ({ user, tableName }) => {
               <th title='Визначення'> Визначення </th>
               {columns.map((el, i) => {
                 let foundTable = dicLegend.find(
-                  (el2) => el2.table == tableName.toLowerCase()
+                  (el2) => el2.table === tableName.toLowerCase()
                 );
                 let found = foundTable
                   ? foundTable.names.find(
-                      (el2) => el2.initName == el.headerName
+                      (el2) => el2.initName === el.headerName
                     )
                   : undefined;
                 if (found === undefined) {
@@ -223,6 +223,40 @@ export const Dictionary = ({ user, tableName }) => {
         </Table>
 
         <AgGridReact
+          localeText={{
+            "noRowsToShow": "Немає рядків для відображення",
+            "page": "Сторінка",
+            "to": "до",
+            "of": "з",
+            "firstPage": "Перша сторінка",
+            "previousPage": "Попередня сторінка",
+            "nextPage": "Наступна сторінка",
+            "lastPage": "Остання сторінка",
+            "ariaRowSelect": "Натисніть SPACE для вибору рядка",
+            "ariaSortableColumn": "Натисність ENTER для сортування",
+            "ariaMenuColumn": "Натисніть CTRL+ENTER для відкриття меню стовпця",
+            "contains": "Містить",
+            "notContains": "Не містить",
+            "equals": "Дорівнює",
+            "notEqual": "Не дорівнює",
+            "startsWith": "Починається з",
+            "endsWith": "Закінчюється на",
+            "blank": "Пусте",
+            "notBlank": "Не пусте",
+            "ariaFilteringOperator": "Оператор фільтрування",
+            "andCondition": "ТА",
+            "orCondition": "ЧИ",
+            "ariaFilterValue": "Фільтр ВІД",
+            "filterOoo": "Фільтр...",
+            "ariaFilterToValue": "Фільтр ДО",
+            "inRangeEnd": "До",
+            "ariaLabelColumnMenu": "Меню стовпця",
+            "ariaLabelSelectField": "Вибрати поле"
+          }}
+          // getLocaleText={({key, defaultValue})=>{
+          //   console.log(`${key} ${defaultValue}`);
+          //   return defaultValue;
+          // }}
           columnDefs={columns}
           rowData={rows}
           rowSelection='single'

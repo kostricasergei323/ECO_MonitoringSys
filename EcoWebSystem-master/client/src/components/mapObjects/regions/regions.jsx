@@ -5,7 +5,7 @@ import { REGIONS_URL } from '../../../utils/constants';
 import { get } from '../../../utils/httpService';
 import { CountData } from '../../../utils/regionsCounter';
 
-import { Dropdown, DropdownButton, Button, Table} from 'react-bootstrap';
+import { Dropdown, DropdownButton, Button, Table } from 'react-bootstrap';
 import { RegionMedStatModal } from '../../medStat/regionMedStatModal';
 import { EmissionsChartModal } from '../../charts/emissionsChartModal';
 
@@ -43,7 +43,7 @@ const Region = ({
   idEnvironment,
   AttachedEmmissions,
   user_name,
-  EnvironmentAttachment
+  EnvironmentAttachment,
 }) => {
   const [Emmissions, setEmmissions] = useState(AttachedEmmissions);
   const [DetailedModalShow, setDetailedModalShow] = useState(false);
@@ -94,44 +94,48 @@ const Region = ({
           )}
         </div>
         {emissions && emissions.length > 0 && (
-            <>
-              <div className="emissions-container">
-                <Table striped bordered hover size='sm' className='emissions-table'>
-                  <thead>
-                    <tr>
-                      <th title='Хімічний елемент'>Хімічний елемент</th>
-                      <th title='Середнє значення'>Середнє значення</th>
-                      <th title='Максимальне значення'>Максимальне значення</th>
-                      <th title='Рік'>Рік</th>
-                      <th title='Місяць'>Місяць</th>
-                      <th title='День'>День</th>
-                      <th title='Одиниця виміру'>Одиниця виміру</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <ReturnLastData emissions={emissions} />
-                  </tbody>
-                </Table>
-              </div>
-              <Button 
-                size='sm' 
-                onClick={() => setDetailedModalShow(true)}>
-                Відобразити графіки викидів
-              </Button>
-              <EmissionsChartModal
-                id={regionId}
-                emissions={emissions}
-                show={DetailedModalShow}
-                onHide={() => setDetailedModalShow(false)}
-                EnvironmentAttachment={EnvironmentAttachment}
-              />
-            </>
-          )}
+          <>
+            <div className='emissions-container'>
+              <Table
+                striped
+                bordered
+                hover
+                size='sm'
+                className='emissions-table'
+              >
+                <thead>
+                  <tr>
+                    <th title='Хімічний елемент'>Хімічний елемент</th>
+                    <th title='Середнє значення'>Середнє значення</th>
+                    <th title='Максимальне значення'>Максимальне значення</th>
+                    <th title='Рік'>Рік</th>
+                    <th title='Місяць'>Місяць</th>
+                    <th title='День'>День</th>
+                    <th title='Одиниця виміру'>Одиниця виміру</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <ReturnLastData emissions={emissions} />
+                </tbody>
+              </Table>
+            </div>
+            <Button size='sm' onClick={() => setDetailedModalShow(true)}>
+              Відобразити графіки викидів
+            </Button>
+            <EmissionsChartModal
+              id={regionId}
+              emissions={emissions}
+              show={DetailedModalShow}
+              onHide={() => setDetailedModalShow(false)}
+              EnvironmentAttachment={EnvironmentAttachment}
+            />
+          </>
+        )}
         {CountedData?.length > 0 && (
           <DropdownButton
             style={{ marginTop: 5 }}
             size='sm'
-            title='Оберіть забрудення'
+            title='Оберіть забруднення'
           >
             {CountedData.map((el, i) => {
               return (
@@ -175,7 +179,12 @@ const initilDate = [
   },
 ];
 
-export const Regions = ({ regions, setFilteredRegions, ActualRegionDate, AdvancedEnvironments }) => {
+export const Regions = ({
+  regions,
+  setFilteredRegions,
+  ActualRegionDate,
+  AdvancedEnvironments,
+}) => {
   const { environmentsInfo } = useContext(EnvironmentsInfoContext);
 
   const idEnvironment = environmentsInfo.selected
@@ -186,9 +195,11 @@ export const Regions = ({ regions, setFilteredRegions, ActualRegionDate, Advance
 
   const fetchRegions = () => {
     get(
-      AdvancedEnvironments?.length == undefined ? 
-      `${REGIONS_URL}?idEnvironment=${idEnvironment}&startDate=${ActualRegionDate[0].startDate.toISOString()}&endDate=${ActualRegionDate[0].endDate.toISOString()}`:
-      `${REGIONS_URL}?idEnvironment=${AdvancedEnvironments.join('&idEnvironment=')}&startDate=${ActualRegionDate[0].startDate.toISOString()}&endDate=${ActualRegionDate[0].endDate.toISOString()}`
+      AdvancedEnvironments?.length == undefined
+        ? `${REGIONS_URL}?idEnvironment=${idEnvironment}&startDate=${ActualRegionDate[0].startDate.toISOString()}&endDate=${ActualRegionDate[0].endDate.toISOString()}`
+        : `${REGIONS_URL}?idEnvironment=${AdvancedEnvironments.join(
+            '&idEnvironment='
+          )}&startDate=${ActualRegionDate[0].startDate.toISOString()}&endDate=${ActualRegionDate[0].endDate.toISOString()}`
     )
       .then(({ data }) => {
         setData(data);

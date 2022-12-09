@@ -1,9 +1,14 @@
-import React from "react";
+import React from 'react';
 
-import './pseudo.css'
+import './pseudo.css';
 
-export const Pseudo = ({setOpened})=>{
-    return(
-      <div onClick={()=>{setOpened(prev=>!prev)}} className="pseudo"/>
-    )
-  }
+export const Pseudo = ({ setOpened }) => {
+  return (
+    <div
+      onClick={() => {
+        setOpened((prev) => !prev);
+      }}
+      className='pseudo'
+    />
+  );
+};

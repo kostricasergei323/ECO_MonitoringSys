@@ -20,38 +20,18 @@ const getPoints = (req, res) => {
     poi.Description,
     poi.Name_object,
     poi.Type,
-    type_of_object.id as Object_Type_Id,
-    type_of_object.Name as Object_Type_Name,
-    owner_type as owner_type_id, 
-    owner_types.type as owner_type_name,
+    type_of_object.id AS Object_Type_Id,
+    type_of_object.Name AS Object_Type_Name,
+    owner_type AS owner_type_id, 
+    owner_types.type AS owner_type_name,
     user.id_of_expert
-  FROM
-    poi
-  INNER JOIN
-   type_of_object
-  ON 
-    poi.Type = type_of_object.id
-  INNER JOIN 
-    owner_types 
-   ON 
-    poi.owner_type = owner_types.id
-  INNER JOIN 
-    user 
-  ON 
-    poi.id_of_user = user.id_of_user
-  INNER JOIN 
-	  emissions_on_map 
-  ON 
-	  poi.Id = emissions_on_map.idPoi
-  INNER JOIN 
-    environment
-  ON
-     environment.id = emissions_on_map.idEnvironment or environment.AttachEnv = emissions_on_map.idEnvironment
-  WHERE 
-    environment.id = ${idEnvironment} or environment.AttachEnv = ${idEnvironment}
-  ;`;
-
-  //	  emissions_on_map.idEnvironment = ${idEnvironment}
+  FROM poi
+  INNER JOIN type_of_object ON poi.Type = type_of_object.id
+  INNER JOIN owner_types ON poi.owner_type = owner_types.id
+  INNER JOIN user ON poi.id_of_user = user.id_of_user
+  INNER JOIN emissions_on_map ON poi.Id = emissions_on_map.idPoi
+  INNER JOIN environment ON (environment.id = emissions_on_map.idEnvironment OR environment.AttachEnv = emissions_on_map.idEnvironment)
+  WHERE environment.id = ${idEnvironment} OR environment.AttachEnv = ${idEnvironment};`;
 
   const pointsPromise = new Promise((resolve, reject) => {
     pool.query(query, (error, rows) => {
@@ -64,22 +44,22 @@ const getPoints = (req, res) => {
     });
   });
 
-  return pointsPromise
-    .then((points) => {
+  return Promise.all([pointsPromise, iconsMapPromise])
+    .then(([points, iconsMap]) => {
       const pointsPromises = points.map(
         async ({
           Id,
           id_of_user,
           id_of_expert,
-          Type,
+          owner_type_id,
+          owner_type_name,
           Coord_Lat,
           Coord_Lng,
           Description,
           Name_object,
           Object_Type_Id,
           Object_Type_Name,
-          owner_type_id,
-          owner_type_name,
+          Type,
         }) => {
           const emissionsOnMapPromise = getEmissionsOnMap(
             SOURCE_POI,
@@ -87,10 +67,7 @@ const getPoints = (req, res) => {
             idEnvironment,
             startDate == undefined && endDate == undefined ? 30 : undefined
           );
-          const [emissions, iconsMap] = await Promise.all([
-            emissionsOnMapPromise,
-            iconsMapPromise,
-          ]);
+          const emissions = await emissionsOnMapPromise;
           return {
             Id,
             id_of_user,
@@ -222,7 +199,7 @@ const getAdvancedPoints = (req, res) => {
   return pointsPromise
     .then((points) => {
       const pointsPromises = points.map(
-        ({
+        async ({
           Id,
           id_of_user,
           id_of_expert,
@@ -241,30 +218,32 @@ const getAdvancedPoints = (req, res) => {
             Id,
             req.query.env ? req.query.env : null
           );
-          return Promise.all([emissionsOnMapPromise, iconsMapPromise]).then(
-            ([emissions, iconsMap]) => ({
-              Id,
-              id_of_user,
-              id_of_expert,
-              owner_type: {
-                id: owner_type_id,
-                name: owner_type_name,
-              },
-              coordinates: [Coord_Lat, Coord_Lng],
-              Description,
-              Name_object,
-              Image: iconsMap.get(+Type),
-              Object_Type_Id,
-              Object_Type_Name,
-              Environments: req.query.env ? req.query.env : [],
+          const [emissions, iconsMap] = await Promise.all([
+            emissionsOnMapPromise,
+            iconsMapPromise,
+          ]);
+          return {
+            Id,
+            id_of_user,
+            id_of_expert,
+            owner_type: {
+              id: owner_type_id,
+              name: owner_type_name,
+            },
+            coordinates: [Coord_Lat, Coord_Lng],
+            Description,
+            Name_object,
+            Image: iconsMap.get(+Type),
+            Object_Type_Id,
+            Object_Type_Name,
+            Environments: req.query.env ? req.query.env : [],
+            emissions,
+            emmissionsStats: CountEmmisionCoif(
               emissions,
-              emmissionsStats: CountEmmisionCoif(
-                emissions,
-                getActualDateTyped(),
-                getActualDateTyped()
-              ),
-            })
-          );
+              getActualDateTyped(),
+              getActualDateTyped()
+            ),
+          };
         }
       );
 

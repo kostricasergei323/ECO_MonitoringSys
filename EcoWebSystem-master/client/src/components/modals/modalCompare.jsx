@@ -1,9 +1,5 @@
 import React, { useEffect } from 'react';
-import {
-  Table,
-  DropdownButton,
-  Dropdown,
-} from 'react-bootstrap';
+import { Table, DropdownButton, Dropdown } from 'react-bootstrap';
 
 import { CompareChart } from '../charts/compareChart.jsx';
 
@@ -17,27 +13,31 @@ import { useState } from 'react';
 import { useContext } from 'react';
 import { EnvironmentsInfoContext } from '../context/environmentsInfoContext';
 import { removeObjectDuplicates } from '../../utils/helpers';
-import { VerticallyCenteredModal } from "../modals/modal";
+import { VerticallyCenteredModal } from '../modals/modal';
 
-import { formParamsForGetArr } from "../../utils/helpers";
+import { formParamsForGetArr } from '../../utils/helpers';
 import './modalCompare.css';
 
-export const CompareModal = ({ points, polygons,chosenEnvironments, ...props }) => {
+export const CompareModal = ({
+  points,
+  polygons,
+  chosenEnvironments,
+  ...props
+}) => {
   const { environmentsInfo } = useContext(EnvironmentsInfoContext);
 
   const [Compares, setCompares] = useState([]);
 
   const [dateWidth, setDateWidth] = React.useState(window.innerWidth);
 
-  const handleWidth = ()=>{
+  const handleWidth = () => {
     setDateWidth(window.innerWidth);
-  } 
+  };
 
-  if (window.onresize === "function") {
+  if (window.onresize === 'function') {
     window.removeEventListener(handleWidth);
-  }
-  else{
-    window.addEventListener('resize',handleWidth);
+  } else {
+    window.addEventListener('resize', handleWidth);
   }
 
   const [EmissionModes, setEmissionModes] = useState([
@@ -73,8 +73,12 @@ export const CompareModal = ({ points, polygons,chosenEnvironments, ...props }) 
       const [date] = state;
       let IdArr = '';
 
-      const idEnvironment = environmentsInfo.selected?environmentsInfo.selected.id:null;
-      const chosenEnv = chosenEnvironments?formParamsForGetArr(chosenEnvironments,'idEnvironment'):null;
+      const idEnvironment = environmentsInfo.selected
+        ? environmentsInfo.selected.id
+        : null;
+      const chosenEnv = chosenEnvironments
+        ? formParamsForGetArr(chosenEnvironments, 'idEnvironment')
+        : null;
 
       for (const itr of points) {
         IdArr += `&PointsId[]=${itr}`;
@@ -84,7 +88,8 @@ export const CompareModal = ({ points, polygons,chosenEnvironments, ...props }) 
       }
 
       get(
-        `${COMPARE_EMISSIONS}?${chosenEnv?chosenEnv:`idEnvironment=${idEnvironment}`}${IdArr}&startDate=${date.startDate.toISOString()}&endDate=${date.endDate.toISOString()}`
+        `${COMPARE_EMISSIONS}?${chosenEnv ? chosenEnv : `idEnvironment=${idEnvironment}`
+        }${IdArr}&startDate=${date.startDate.toISOString()}&endDate=${date.endDate.toISOString()}`
       ).then(({ data }) => {
         setCompares(data);
         setEmissionModes(
@@ -126,23 +131,31 @@ export const CompareModal = ({ points, polygons,chosenEnvironments, ...props }) 
 
   const TableData = ({ TableWillUpdate }) => {
     return (
-      <Table className='CompareTable' responsive size='lg'>
-        <thead>
+      <Table className='CompareTable' responsive size='lg' style={{ display: "block", maxHeight: "250px" }}>
+        <thead style={{ position: "sticky" }}>
           <tr>
-            <th title=' '></th>
-            {Compares.map((d, i) => {
-              if (d.visible) {
-                return (
-                  <th key={'thNameObj=' + i} title={d.Name_Object}>
-                    {d.Name_Object}
-                  </th>
-                );
-              }
-            })}
+            <th title='Обʼєкт'>Обʼєкт</th>
+            <th title='Максимальне значення'>Максимальне значення</th>
+            <th title='Середнє значення'>Середнє значення</th>
+            <th title='Дата додавання'>Дата додавання</th>
+            <th title='Одиниця виміру'>Одиниця виміру</th>
+            <th title='Назва елементу'>Назва елементу</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
+          {Compares.filter(d => d.visible).map((d, i) => {
+            return (
+              <tr key={'thNameObj=' + i} title={d.Name_Object}>
+                <td>{d.Name_Object}</td>
+                <td>{d.ValueMax}</td>
+                <td>{d.ValueAvg}</td>
+                <td>{d.DateEm}</td>
+                <td>{d.Measure}</td>
+                <td>{d.ElementName}</td>
+              </tr>
+            );
+          })}
+          {/* <tr>
             <th title='Максимальне значення'>Максимальне значення</th>
             {Compares.map((d, i) => {
               if (d.visible) {
@@ -201,7 +214,7 @@ export const CompareModal = ({ points, polygons,chosenEnvironments, ...props }) 
                 );
               }
             })}
-          </tr>
+          </tr> */}
         </tbody>
       </Table>
     );
@@ -215,82 +228,83 @@ export const CompareModal = ({ points, polygons,chosenEnvironments, ...props }) 
       header="Порівняння обраних об'єктів."
     >
       <h4>Оберіть дати для відображення викидів за певний період</h4>
-      {dateWidth>1200? (
+      {dateWidth > 1200 ? (
         <DateRangePicker
+          locale={uk}
+          onChange={(item) => setState([item.selection])}
+          showSelectionPreview={true}
+          moveRangeOnFirstSelection={false}
+          months={2}
+          ranges={state}
+          direction='horizontal'
+        />
+      ) : (
+        <div style={{ display: 'flex' }}>
+          <DateRange
             locale={uk}
+            editableDateInputs={true}
             onChange={(item) => setState([item.selection])}
             showSelectionPreview={true}
             moveRangeOnFirstSelection={false}
-            months={2}
             ranges={state}
-            direction='horizontal'
-        />
-      ):(
-        <div style={{display:"flex"}}>
-        <DateRange
-          locale={uk}
-          editableDateInputs={true}
-          onChange={item => setState([item.selection])}
-          showSelectionPreview={true}
-          moveRangeOnFirstSelection={false}
-          ranges={state}
-          className="adaptiveDateRange"
-        />
-      </div>
+            className='adaptiveDateRange'
+          />
+        </div>
       )}
 
-        {Compares.length > 0 && (
-          <>
-            <DropdownButton
-              className='DropDownElementButton'
-              title={
-                ChosenEmissionMode.set == ''
-                  ? 'Елемент забруднення'
-                  : ChosenEmissionMode.set
+      {Compares.length > 0 && (
+        <>
+          <DropdownButton
+            className='DropDownElementButton'
+            title={
+              ChosenEmissionMode.set == ''
+                ? 'Елемент забруднення'
+                : ChosenEmissionMode.set
+            }
+            id='bg-vertical-dropdown-1'
+          >
+            <Dropdown.Item
+              onClick={() =>
+                setChosenEmissionMode({
+                  base: true,
+                  set: 'Усі можливі',
+                  measue: null,
+                })
               }
-              id='bg-vertical-dropdown-1'
             >
-              <Dropdown.Item
-                onClick={() =>
-                  setChosenEmissionMode({
-                    base: true,
-                    set: 'Усі можливі',
-                    measue: null,
-                  })
-                }
-              >
-                {' '}
-                Усі можливі{' '}
-              </Dropdown.Item>
-              {EmissionModes.map((el) => {
-                return (
-                  <Dropdown.Item
-                    onClick={() =>
-                      setChosenEmissionMode({
-                        base: false,
-                        set: el.name,
-                        measue: el.measure,
-                      })
-                    }
-                  >
-                    {' '}
-                    {el.name}{' '}
-                  </Dropdown.Item>
-                );
-              })}
-            </DropdownButton>
-            {ChosenEmissionMode.measue && (
-              <h4>Одиниця виміру: {ChosenEmissionMode.measue}</h4>
-            )}
-            <TableData TableWillUpdate={TableWillUpdate} />
-            {!ChosenEmissionMode.base && (
-              <CompareChart
-                title={'Графік викидів'}
-                data={Compares.filter((el) => el.visible == true)}
-              />
-            )}
-          </>
-        )}
+              {' '}
+              Усі можливі{' '}
+            </Dropdown.Item>
+            {EmissionModes.map((el) => {
+              return (
+                <Dropdown.Item
+                  key={el.name + el.measure}
+                  onClick={() =>
+                    setChosenEmissionMode({
+                      base: false,
+                      set: el.name,
+                      measue: el.measure,
+                    })
+                  }
+                >
+                  {' '}
+                  {el.name}{' '}
+                </Dropdown.Item>
+              );
+            })}
+          </DropdownButton>
+          {ChosenEmissionMode.measue && (
+            <h4>Одиниця виміру: {ChosenEmissionMode.measue}</h4>
+          )}
+          <TableData TableWillUpdate={TableWillUpdate} />
+          {!ChosenEmissionMode.base && (
+            <CompareChart
+              title={'Графік викидів'}
+              data={Compares.filter((el) => el.visible == true)}
+            />
+          )}
+        </>
+      )}
     </VerticallyCenteredModal>
     // <Modal
     //   {...props}

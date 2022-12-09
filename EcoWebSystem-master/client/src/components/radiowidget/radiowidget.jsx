@@ -11,7 +11,8 @@ const Widget = ({}) => {
     const initialComponentScript = document.createElement('script');
     connectionScript.src =
       'https://rewidget.jrc.ec.europa.eu/v3/loader.ashx?theme=eu-2015&lang=en';
-    initialComponentScript.innerHTML = "__eurdep_maps('widget', {center: [49.664447, 31.034037], zoom: 6});";
+    initialComponentScript.innerHTML =
+      "__eurdep_maps('widget', {center: [49.664447, 31.034037], zoom: 6});";
     refer.current.append(connectionScript);
     connectionScript.onload = () => {
       refer.current.append(initialComponentScript);

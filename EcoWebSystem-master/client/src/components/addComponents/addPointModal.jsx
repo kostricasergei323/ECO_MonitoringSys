@@ -256,7 +256,7 @@ export const AddPointModal = ({
       onHide={() => hide()}
       header={isEditPointMode ? 'Редагувати маркер' : 'Додати маркер'}
     >
-      <Form>
+      <Form style={{ display: "flex", flexFlow: "column nowrap", gap: "1rem" }}>
         <Form.Group>
           <div>Зчитати дані з листа Excel або текстового файла</div>
           <input

@@ -3,9 +3,9 @@ const { default: Axios } = require('axios');
 
 const pool = require('../../../db-config/mysql-config');
 
-const replaceSymbol = (str)=>{
+const replaceSymbol = (str) => {
   return str.replace(new RegExp("'", 'g'), "\\'");
-}
+};
 
 function AddPoi(
   id_of_user,
@@ -16,7 +16,9 @@ function AddPoi(
   Name_object
 ) {
   let query = `insert into poi (id_of_user, Type, owner_type, Coord_Lat, Coord_Lng, Description , Name_object)
-                   VALUES ('${id_of_user}', '${type}', '${owner_type}','${coordinates[0]}', '${coordinates[1]}', '${replaceSymbol(description)}', '${Name_object}');`;
+                   VALUES ('${id_of_user}', '${type}', '${owner_type}','${
+    coordinates[0]
+  }', '${coordinates[1]}', '${replaceSymbol(description)}', '${Name_object}');`;
 
   return query;
 }
@@ -33,30 +35,41 @@ async function LoadPoi_SaveEcoBotApi() {
       return response.data;
     }
   );
-  pool.query(`select * from poi where name_object like '%SAVEDNIPRO_%'`, (err,res)=>{
-    if(err){
-      console.log(err);
-    }
-    else{
-      for (const itr of data) {
-        if (
-          !res.find(el=> 
-            (el.Coord_Lat == itr.latitude && el.Coord_Lng==itr.longitude) ||
-            (el.Name_object == itr.id))
-        ) {
-          pool.query(
-            AddPoi(2, 273, 4, [itr.latitude, itr.longitude], itr.stationName, itr.id),
-            (err, result, field) => {
-              if (err) {
-                console.log(err);
+  pool.query(
+    `select * from poi where name_object like '%SAVEDNIPRO_%'`,
+    (err, res) => {
+      if (err) {
+        console.log(err);
+      } else {
+        for (const itr of data) {
+          if (
+            !res.find(
+              (el) =>
+                (el.Coord_Lat == itr.latitude &&
+                  el.Coord_Lng == itr.longitude) ||
+                el.Name_object == itr.id
+            )
+          ) {
+            pool.query(
+              AddPoi(
+                2,
+                273,
+                4,
+                [itr.latitude, itr.longitude],
+                itr.stationName,
+                itr.id
+              ),
+              (err, result, field) => {
+                if (err) {
+                  console.log(err);
+                }
               }
-            }
-          );
+            );
+          }
         }
       }
     }
-  });
-
+  );
 }
 
 async function LoadPoiIssue_SaveEcoBotApi() {
@@ -80,7 +93,7 @@ async function LoadPoiIssue_SaveEcoBotApi() {
                   (el) =>
                     el.idPoi == itr.id &&
                     el.idElement == itr2.pol &&
-                    el.ValueAvg == (itr2.value/1000).toFixed(5) &&
+                    el.ValueAvg == (itr2.value / 1000).toFixed(5) &&
                     el.year == new Date(itr2.time).getFullYear() &&
                     el.month == new Date(itr2.time).getMonth() + 1 &&
                     el.day == new Date(itr2.time).getDate()
@@ -91,11 +104,11 @@ async function LoadPoiIssue_SaveEcoBotApi() {
                   AddEmmisionsOnMap(
                     itr.id,
                     itr2.pol,
-                    (itr2.value/1000).toFixed(5),
+                    (itr2.value / 1000).toFixed(5),
                     new Date(itr2.time).getFullYear(),
                     new Date(itr2.time).getMonth() + 1,
                     new Date(itr2.time).getDate(),
-                    "mg/m3"
+                    'mg/m3'
                   ),
                   (err, result, field) => {
                     if (err) {

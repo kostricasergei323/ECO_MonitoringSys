@@ -1,13 +1,14 @@
 const pool = require('../../db-config/mysql-config');
 
-const { formatDateForDatabase } = require('../utils/formatDateForDatabase');
+const { CountEmmisionCoif } = require('../utils/pointCoifCounter');
 
 const tableName = 'emissions_on_map';
 const SOURCE_POI = 'poi';
 const SOURCE_POLYGON = 'polygon';
 
-const insertEmissionOnMap = (source, emission) => {
-  const {
+const insertEmissionOnMap = (
+  source,
+  {
     idPoi,
     idElement,
     idEnvironment,
@@ -18,7 +19,8 @@ const insertEmissionOnMap = (source, emission) => {
     month,
     day,
     measure,
-  } = emission;
+  }
+) => {
   return new Promise((resolve, reject) => {
     const query = `
       INSERT INTO 
@@ -55,8 +57,7 @@ const insertEmissionOnMap = (source, emission) => {
       values.push(idPolygon);
     }
 
-    const parameters = [tableName, columnNames, values];
-    pool.query(query, parameters, (error) => {
+    pool.query(query, [tableName, columnNames, values], (error) => {
       if (error) {
         reject(error);
       }
@@ -66,33 +67,21 @@ const insertEmissionOnMap = (source, emission) => {
   });
 };
 
-const getEmissionsOnMap = (source, id, idEnvironment,limit) => {
-  let filteringColumnName, idEnvironmentClause;
-  if (source === SOURCE_POI) {
-    filteringColumnName = 'idPoi';
-  } else if (source === SOURCE_POLYGON) {
-    filteringColumnName = 'idPoligon';
-  }
-
-  if (idEnvironment && Array.isArray(idEnvironment)) {
-    idEnvironmentClause = 'AND ';
-    idEnvironment.forEach((el,i) => {
-      //idEnvironmentClause+= (i==idEnvironment.length-1)?`emissions_on_map.idEnvironment = ${el}) `:`emissions_on_map.idEnvironment = ${el} or `
-      idEnvironmentClause+= (i==idEnvironment.length-1)?
-      `environment.id = ${el} or environment.AttachEnv =${el} `:
-      `environment.id = ${el} or environment.AttachEnv =${el} or `
-      // `emissions_on_map.idEnvironment = ${el}) `:
-      // `emissions_on_map.idEnvironment = ${el} or `
-    });
-  } else if(idEnvironment) {
-    //idEnvironmentClause =' AND ?? = ? '
-    idEnvironmentClause =`AND environment.id = ${idEnvironment} or environment.AttachEnv =${idEnvironment} `
-  }else{
-    idEnvironmentClause='';
-  }
+const getEmissionsOnMap = (source, id, idEnvironment, limit) => {
+  const filteringColumnName =
+    source === SOURCE_POI
+      ? 'idPoi'
+      : source === SOURCE_POLYGON
+      ? 'idPoligon'
+      : undefined;
+  const idEnvironmentClause =
+    idEnvironment && Array.isArray(idEnvironment) && idEnvironment.length > 0
+      ? `AND (environment.id IN (${idEnvironment}) OR environment.AttachEnv IN (${idEnvironment}))`
+      : idEnvironment
+      ? `AND (environment.id = ${idEnvironment} OR environment.AttachEnv = ${idEnvironment})`
+      : '';
 
   return new Promise((resolve, reject) => {
-    const emissionsOnMapTable = 'emissions_on_map';
     const columnNames = [
       'idElement',
       'idEnvironment',
@@ -105,33 +94,22 @@ const getEmissionsOnMap = (source, id, idEnvironment,limit) => {
       'elements.short_name',
       'environment.name',
       'gdk.mpc_avrg_d',
-      'gdk.mpc_m_ot'
+      'gdk.mpc_m_ot',
     ];
     const query = `
-      SELECT
-      ??
-      FROM
-      ??
-      INNER JOIN
-        elements
-      ON
-        elements.code = emissions_on_map.idElement
-      INNER JOIN 
-        environment
-      ON
-        environment.id = emissions_on_map.idEnvironment or environment.AttachEnv = emissions_on_map.idEnvironment
-      LEFT JOIN 
-        gdk
-      ON
-        gdk.code = emissions_on_map.idElement
-      WHERE
-        ?? = ?
+      SELECT ??
+      FROM ??
+      INNER JOIN elements ON elements.code = emissions_on_map.idElement
+      INNER JOIN environment ON (environment.id = emissions_on_map.idEnvironment OR environment.AttachEnv = emissions_on_map.idEnvironment)
+      LEFT JOIN gdk ON gdk.code = emissions_on_map.idElement
+      WHERE ?? = ?
       ${idEnvironmentClause}
-      
-      Order by emissions_on_map.Year desc, emissions_on_map.Month desc, emissions_on_map.day desc ${limit?'limit '+limit:''};`;
+      ORDER BY emissions_on_map.Year DESC, emissions_on_map.Month DESC, emissions_on_map.day DESC ${
+        limit ? 'LIMIT ' + limit : ''
+      };`;
     const values = [
       columnNames,
-      emissionsOnMapTable,
+      tableName,
       filteringColumnName,
       id,
       'idEnvironment',

@@ -3,7 +3,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const config = require('config');
 const router = require('./server/router');
-const {Schedule} = require('./server/utils/scheduler')
+const { Schedule } = require('./server/utils/scheduler');
 
 const app = express();
 
@@ -27,7 +27,10 @@ app.use('/', router);
 const PORT = process.env.PORT || config.get('port') || 3001;
 
 app.listen(PORT, () => {
-  console.log(`Eco app listening on port ${PORT}!`)
-  const sch = new Schedule(+(process.env.HOUR_RESET)?process.env.HOUR_RESET:02,+(process.env.MINUTE_RESET)?process.env.MINUTE_RESET:30);
+  console.log(`Eco app listening on port ${PORT}!`);
+  const sch = new Schedule(
+    +process.env.HOUR_RESET ? process.env.HOUR_RESET : 02,
+    +process.env.MINUTE_RESET ? process.env.MINUTE_RESET : 30
+  );
   sch.Start();
 });

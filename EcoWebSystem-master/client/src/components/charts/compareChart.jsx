@@ -7,7 +7,7 @@ import {
   CartesianGrid,
   Tooltip,
   //Legend,
-  ResponsiveContainer
+  ResponsiveContainer,
 } from 'recharts';
 import './compareChart.css';
 
@@ -46,7 +46,7 @@ export const CompareChart = ({ title, data }) => {
   return (
     <div className='compare-chart'>
       <h3>{title}</h3>
-      <ResponsiveContainer width="100%" height={250}>
+      <ResponsiveContainer width='100%' height={250}>
         <LineChart
           width={500}
           height={250}

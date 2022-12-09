@@ -33,11 +33,11 @@
   overflow-x: hidden;
 }
 
-.transRight{
+.transRight {
   transform: translateY(-50%) translateX(calc(100% - 20px));
 }
 
-.tempWarning{
+.tempWarning {
   color: rgb(223, 56, 56);
   animation: tempWarning;
   animation-fill-mode: forwards;
@@ -45,22 +45,21 @@
   animation-duration: 3s;
 }
 
-.tempWarningOff{
+.tempWarningOff {
   display: none;
 }
 
-@keyframes tempWarning{
-  0%{
+@keyframes tempWarning {
+  0% {
     transform: scaleY(0);
   }
-  50%{
+  50% {
     transform: scaleY(1);
   }
-  100%{
+  100% {
     transform: scaleY(0);
   }
-} 
-
+}
 
 @media screen and (max-width: 991px) {
   .MapFinderForm {

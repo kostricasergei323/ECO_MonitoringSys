@@ -10,7 +10,7 @@ import img6 from '../../images/6.jpeg';
 
 export const CarouselView = () => {
   return (
-    <Carousel className='carousel'>
+    <Carousel interval={50000} className='carousel'>
       <Carousel.Item>
         <img className='w-100' src={img1} alt='First slide' />
         <Carousel.Caption>

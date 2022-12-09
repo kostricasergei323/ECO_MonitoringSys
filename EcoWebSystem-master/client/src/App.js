@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -17,6 +17,7 @@ import {
   EnvironmentsInfoContext,
   environmentsInfoInitialState,
 } from './components/context/environmentsInfoContext';
+import { LoaderContext } from './components/context/loaderContext';
 
 export const App = () => {
   const [user, setUser] = useState({});
@@ -24,6 +25,9 @@ export const App = () => {
     environmentsInfoInitialState
   );
   const [dictionary, setDictionary] = useState('');
+
+  const isLoadingRef = useRef(false);
+  const loadingTextRef = useRef('');
 
   React.useEffect(() => {
     setUser(JSON.parse(sessionStorage.getItem('user')));
@@ -52,7 +56,19 @@ export const App = () => {
           />
           <Routes>
             <Route exact path='/' element={<Home />} />
-            <Route path='/earth' element={<MapView user={user} />} />
+            <Route
+              path='/earth'
+              element={
+                <LoaderContext.Provider
+                  value={{
+                    isLoading: isLoadingRef,
+                    loadingText: loadingTextRef,
+                  }}
+                >
+                  <MapView user={user} />
+                </LoaderContext.Provider>
+              }
+            />
             <Route
               path='/dictionary'
               element={

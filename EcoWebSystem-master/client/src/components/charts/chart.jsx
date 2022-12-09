@@ -22,12 +22,12 @@ export const Chart = ({ title, data }) => {
   }));
 
   return (
-    <div style={{padding:'2px'}}>
-      <h5 className="text-center">{title}</h5>
+    <div style={{ padding: '2px' }}>
+      <h5 className='text-center'>{title}</h5>
       <PieChart width={350} height={350}>
         <Pie
           data={dataForView}
-          cx={"50%"}
+          cx={'50%'}
           cy={200}
           label
           labelLine={false}

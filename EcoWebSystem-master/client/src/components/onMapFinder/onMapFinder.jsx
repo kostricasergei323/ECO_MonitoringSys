@@ -50,7 +50,10 @@ const CitiesMenu = React.forwardRef(
           value={value}
           style={{ width: '90%' }}
         />
-        <ul className='list-unstyled'>
+        <ul
+          className='list-unstyled'
+          style={{ maxHeight: '130px', overflow: 'auto' }}
+        >
           {React.Children.toArray(children).filter(
             (child) =>
               !value ||
@@ -76,7 +79,11 @@ const CityFinder = ({ ViewReposition }) => {
         <Dropdown.Toggle as={CitiesToogle} id='dropdown-custom-components'>
           Оберіть місто
         </Dropdown.Toggle>
-        <Dropdown.Menu className='smallCities' as={CitiesMenu}>
+        <Dropdown.Menu
+          className='smallCities'
+          as={CitiesMenu}
+          style={{ overflow: 'hidden' }}
+        >
           {cities &&
             cities.map((el, i) => {
               return (
@@ -114,8 +121,15 @@ const CordFinder = ({ ViewReposition }) => {
   return (
     <Form>
       <Form.Label>Введіть координати </Form.Label>
-      <Row style={{ width: '100%', marginRight: '0' }}>
-        <Col>
+      <Row
+        style={{
+          width: '100%',
+          display: 'flex',
+          margin: 0,
+          justifyContent: 'space-between',
+        }}
+      >
+        <Col style={{ padding: 0, margin: '0px 15px 0px 0px' }}>
           <Form.Control
             placeholder='Широта'
             className='input-invalid'
@@ -127,7 +141,7 @@ const CordFinder = ({ ViewReposition }) => {
             }}
           />
         </Col>
-        <Col>
+        <Col style={{ padding: 0 }}>
           <Form.Control
             placeholder='Довгота'
             className='input-invalid'

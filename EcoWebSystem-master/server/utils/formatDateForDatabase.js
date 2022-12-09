@@ -6,21 +6,21 @@ const formatDateForDatabase = (dateISOString) => {
   return `${date.year()}-${date.month() + 1}-${date.date()}`;
 };
 
-const getActualDate  = () =>{
+const getActualDate = () => {
   const date = moment().tz('Europe/Kiev');
 
   return {
     year: date.year(),
     month: date.month() + 1,
     date: date.date(),
-  }
-}
+  };
+};
 
-const getActualDateTyped  = () =>{
+const getActualDateTyped = () => {
   const date = moment().tz('Europe/Kiev');
 
   return new Date(date.year(), date.month(), date.date());
-}
+};
 
 const ExcelDateToJSDate = (serial) => {
   var utc_days = Math.floor(serial - 25569);
@@ -58,5 +58,5 @@ module.exports = {
   formatDateForDatabase,
   formatExcelDateToDateArr,
   getActualDate,
-  getActualDateTyped
+  getActualDateTyped,
 };

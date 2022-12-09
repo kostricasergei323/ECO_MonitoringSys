@@ -26,11 +26,11 @@ const login = (req, res) => {
     if (!isEmpty(rows)) {
       const row = rows[0];
       const response = {
-        expert_name: row.expert_name,
-        id_of_expert: row.id_of_expert,
-        FIO: row.expert_FIO,
-        id_of_user: row.id_of_user,
         user_name: row.user_name,
+        id_of_expert: row.id_of_expert,
+        id_of_user: row.id_of_user,
+        expert_name: row.expert_name,
+        FIO: row.expert_FIO,
       };
 
       return res.send(JSON.stringify(response));

@@ -15,27 +15,27 @@
   text-overflow: ellipsis;
 }
 
-.ColumnLegend>tbody>tr>th {
+.ColumnLegend > tbody > tr > th {
   position: -webkit-sticky; /* for Safari */
   position: sticky;
   left: 0;
   background-color: white;
 }
 
-.ColumnLegend>tbody>tr,
-.ColumnLegend>tbody>tr>td{
-  transition: 150ms ;
+.ColumnLegend > tbody > tr,
+.ColumnLegend > tbody > tr > td {
+  transition: 150ms;
 }
 
-.ColumnLegend>tbody>tr>td{
+.ColumnLegend > tbody > tr > td {
   border-left: red;
   border-right: red;
 }
 
-.ColumnLegend>tbody>tr:hover{
+.ColumnLegend > tbody > tr:hover {
   background-color: rgba(90, 177, 228, 0.3);
 }
 
-.ColumnLegend>tbody>tr>td:hover{
+.ColumnLegend > tbody > tr > td:hover {
   border: 0.5px solid rgb(0, 174, 255);
 }

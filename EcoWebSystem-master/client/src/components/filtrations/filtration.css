@@ -12,14 +12,14 @@
   background: #fff;
   padding: 10px 10px;
   padding-right: 0;
-  border: solid 3px grey; 
+  border: solid 3px grey;
   border-left: none;
   border-bottom-right-radius: 20px;
   border-top-right-radius: 20px;
   text-align: left;
 }
 
-.transLeft{
+.transLeft {
   transform: translateY(-50%) translateX(calc(-100% + 20px));
 }
 

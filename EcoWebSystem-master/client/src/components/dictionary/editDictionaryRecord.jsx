@@ -87,13 +87,15 @@ export const EditDictionaryRecord = ({
               ))}
           </Form>
           {columns.length > 0 && (
-            <Button variant='primary' onClick={editRecord} className='mb-3'>
-              Редагувати
-            </Button>
+            <div className='text-center mt-3'>
+              <Button variant='primary' onClick={editRecord} className='mb-3'>
+                Редагувати
+              </Button>
+            </div>
           )}
         </>
       ) : (
-        <Alert className='m-auto' variant='primary'>
+        <Alert className='m-auto w-75' variant='primary'>
           Оберіть рядок для редагування
         </Alert>
       )}

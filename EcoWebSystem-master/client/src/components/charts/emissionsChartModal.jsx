@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Table, Tabs, Tab} from 'react-bootstrap';
+import { Table, Tabs, Tab } from 'react-bootstrap';
 
 import { get } from '../../utils/httpService';
 import { EMISSIONS_CALCULATIONS_URL } from '../../utils/constants';
@@ -14,9 +14,9 @@ import { VerticallyCenteredModal } from '../modals/modal';
 import { Chart } from '../charts/chart';
 import { DateRangePickerView } from '../rangePicker/dateRangePicker';
 import { EmissionLineChart } from '../charts/emissionsLineChart';
-import { FormulaCalculationsInfo } from '../helperComponents/calculationsInfo'
+import { FormulaCalculationsInfo } from '../helperComponents/calculationsInfo';
 
-import { formParamsForGetArr } from "../../utils/helpers";
+import { formParamsForGetArr } from '../../utils/helpers';
 
 import '../charts/emissionsChartModal.css';
 import { EnvironmentsInfoContext } from '../context/environmentsInfoContext';
@@ -31,7 +31,7 @@ export const EmissionsChartModal = ({
   show,
   emissions,
   EnvironmentAttachment,
-  isAdvanced
+  isAdvanced,
 }) => {
   const { environmentsInfo } = useContext(EnvironmentsInfoContext);
   const param = isPoint ? 'idPoi' : 'idPolygon';
@@ -42,12 +42,20 @@ export const EmissionsChartModal = ({
   }, [id]);
 
   const getEmissionCalculations = (id) => {
-    const idEnvironment = environmentsInfo.selected?environmentsInfo.selected.id:null;
-    const envParam = formParamsForGetArr(EnvironmentAttachment,'envAttach');
+    const idEnvironment = environmentsInfo.selected
+      ? environmentsInfo.selected.id
+      : null;
+    const envParam = formParamsForGetArr(EnvironmentAttachment, 'envAttach');
 
     get(
-      `${EMISSIONS_CALCULATIONS_URL}?idEnvironment=${idEnvironment}&${param}=${id}${(EnvironmentAttachment && EnvironmentAttachment.length>0)?'&'+envParam:''}`
-    ).then(({ data }) => {setEmissionCalculations(data);});
+      `${EMISSIONS_CALCULATIONS_URL}?idEnvironment=${idEnvironment}&${param}=${id}${
+        EnvironmentAttachment && EnvironmentAttachment.length > 0
+          ? '&' + envParam
+          : ''
+      }`
+    ).then(({ data }) => {
+      setEmissionCalculations(data);
+    });
   };
 
   const chartAverageData =
@@ -68,11 +76,11 @@ export const EmissionsChartModal = ({
       header='Відобразити викиди'
     >
       <Tabs>
-        <Tab eventKey="emissions" title="Забруднення">
+        <Tab eventKey='emissions' title='Забруднення'>
           <h4 className='mb-3'>
             Оберіть дати для відображення викидів за певний період
           </h4>
-          
+
           <DateRangePickerView
             id={id}
             param={param}
@@ -80,7 +88,7 @@ export const EmissionsChartModal = ({
             EnvironmentAttachment={EnvironmentAttachment}
           />
           {emissionCalculations.length > 0 ? (
-            <div className="emission-table-wraper">
+            <div className='emission-table-wraper'>
               <Table className='emissions-inner-table'>
                 <thead>
                   <tr>
@@ -94,7 +102,9 @@ export const EmissionsChartModal = ({
                       Середнє значення average викидів
                     </th>
                     <th title='ГДК average'>ГДК average</th>
-                    <th title='Перевищення ГДК average'>Перевищення ГДК average</th>
+                    <th title='Перевищення ГДК average'>
+                      Перевищення ГДК average
+                    </th>
                     <th title='Max викидів'>Max викидів</th>
                     <th title='ГДК max'>ГДК max</th>
                     <th title='Перевищення ГДК max'>Перевищення ГДК max</th>
@@ -102,27 +112,30 @@ export const EmissionsChartModal = ({
                 </thead>
                 <tbody>
                   {emissionCalculations.map((emission, id) => {
-                    const exceedingByAverage = emission.averageCalculations.gdkAverage
+                    const exceedingByAverage = emission.averageCalculations
+                      .gdkAverage
                       ? (
                           emission.averageCalculations.gdkAverage -
                           emission.averageCalculations.average
-                        ).toFixed(valuesPrecision) >=0 ? "В межах норми":
-                        -(
-                          emission.averageCalculations.gdkAverage - 
-                          emission.averageCalculations.average
-                        ).toFixed(valuesPrecision)
+                        ).toFixed(valuesPrecision) >= 0
+                        ? 'В межах норми'
+                        : -(
+                            emission.averageCalculations.gdkAverage -
+                            emission.averageCalculations.average
+                          ).toFixed(valuesPrecision)
                       : emptyState;
 
-                    const exceedingByMaximum = emission.maximumCalculations.gdkMax
+                    const exceedingByMaximum = emission.maximumCalculations
+                      .gdkMax
                       ? (
                           emission.maximumCalculations.gdkMax -
                           emission.maximumCalculations.max
-                        ).toFixed(valuesPrecision) >=0 ? "В межах норми"
-                        : 
-                        -(
-                          emission.averageCalculations.gdkMax -
-                          emission.averageCalculations.max
-                        ).toFixed(valuesPrecision)
+                        ).toFixed(valuesPrecision) >= 0
+                        ? 'В межах норми'
+                        : -(
+                            emission.averageCalculations.gdkMax -
+                            emission.averageCalculations.max
+                          ).toFixed(valuesPrecision)
                       : emptyState;
 
                     return (
@@ -142,19 +155,39 @@ export const EmissionsChartModal = ({
                         </td>
                         <td
                           title={
-                            emission.averageCalculations.gdkAverage || emptyState
+                            emission.averageCalculations.gdkAverage ||
+                            emptyState
                           }
                         >
-                          {emission.averageCalculations.gdkAverage || emptyState}
+                          {emission.averageCalculations.gdkAverage ||
+                            emptyState}
                         </td>
-                        <td title={exceedingByAverage?exceedingByAverage:emptyState}>{exceedingByAverage}</td>
+                        <td
+                          title={
+                            exceedingByAverage ? exceedingByAverage : emptyState
+                          }
+                        >
+                          {exceedingByAverage}
+                        </td>
                         <td title={emission.maximumCalculations.max}>
-                          {emission.maximumCalculations.max.toFixed(valuesPrecision)}
+                          {emission.maximumCalculations.max.toFixed(
+                            valuesPrecision
+                          )}
                         </td>
-                        <td title={emission.maximumCalculations.gdkMax || emptyState}>
+                        <td
+                          title={
+                            emission.maximumCalculations.gdkMax || emptyState
+                          }
+                        >
                           {emission.maximumCalculations.gdkMax || emptyState}
                         </td>
-                        <td title={exceedingByMaximum?exceedingByMaximum: emptyState}>{exceedingByMaximum}</td>
+                        <td
+                          title={
+                            exceedingByMaximum ? exceedingByMaximum : emptyState
+                          }
+                        >
+                          {exceedingByMaximum}
+                        </td>
                       </tr>
                     );
                   })}
@@ -186,10 +219,8 @@ export const EmissionsChartModal = ({
           )}
         </Tab>
         {sessionStorage.getItem('user') && (
-          <Tab eventKey="math" title="Розрахунки">
-            <FormulaCalculationsInfo
-              id={id}
-            />
+          <Tab eventKey='math' title='Розрахунки'>
+            <FormulaCalculationsInfo id={id} />
           </Tab>
         )}
       </Tabs>

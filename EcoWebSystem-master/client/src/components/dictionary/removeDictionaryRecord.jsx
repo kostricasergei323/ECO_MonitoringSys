@@ -50,12 +50,9 @@ export const RemoveDictionaryRecord = ({
   };
 
   return (
-    <div>
-      {!selectedRow && (
-        <Alert variant='primary'>Оберіть рядок для видалення</Alert>
-      )}
-      {selectedRow && (idValue || idValue === 0) && idColumnName && (
-        <div className='d-flex justify-content-center flex-column'>
+    <>
+      {selectedRow ? (idValue || idValue === 0) && idColumnName && (
+        <div className='d-flex justify-content-center flex-column w-75 m-auto'>
           <InputGroup size='md'>
             <InputGroup.Text id='inputGroup-sizing-md'>
               Видалити {idColumnName}:
@@ -75,7 +72,11 @@ export const RemoveDictionaryRecord = ({
             </Button>
           </div>
         </div>
-      )}
-    </div>
+      ) :
+        (
+          <Alert variant='primary' className='m-auto w-75'>Оберіть рядок для видалення</Alert>
+        )
+      }
+    </>
   );
 };

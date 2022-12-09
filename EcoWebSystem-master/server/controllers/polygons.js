@@ -1,5 +1,4 @@
 const pool = require('../../db-config/mysql-config');
-const { noLockQuery } = require('../utils/helpers');
 
 const {
   insertEmissionOnMap,
@@ -31,16 +30,17 @@ const getPolygons = (req, res) => {
       poligon.name,
       poligon.type,
       poligon.id_of_user,
-      user.user_name,
+      expert.expert_name,
       user.id_of_expert,
       emissions_on_map.idEnvironment
     FROM poligon
       INNER JOIN user ON poligon.id_of_user = user.id_of_user
       LEFT JOIN emissions_on_map ON poligon.id_of_poligon = emissions_on_map.idPoligon
+      LEFT JOIN expert ON user.id_of_expert = expert.id_of_expert 
     ;
   `;
 
-  let queryGetPolygonPoints = `
+  const queryGetPolygonPoints = `
     SELECT
       point_poligon.longitude,
       point_poligon.latitude,
@@ -94,7 +94,7 @@ const getPolygons = (req, res) => {
           type: polygon.type,
           polygonPoints: mappedPolygonPoints,
           id_of_user: polygon.id_of_user,
-          user_name: polygon.user_name,
+          user_name: polygon.expert_name,
           id_of_expert: polygon.id_of_expert,
           idEnvironment: polygon.idEnvironment,
         };
@@ -260,17 +260,18 @@ const getAdvancedPolygons = (req, res) => {
       });
     })
     .then((mappedPolygons) => {
-      const mappedPolygonsPromises = mappedPolygons.map((polygon) => {
+      const mappedPolygonsPromises = mappedPolygons.map(async (polygon) => {
         const emissionsOnMapPromise = getEmissionsOnMap(
           SOURCE_POLYGON,
           polygon.poligonId,
           req.query.env ? req.query.env : null
         );
-        return emissionsOnMapPromise.then((emissions) => ({
+        const emissions = await emissionsOnMapPromise;
+        return {
           ...polygon,
           emissions,
           Environments: req.query.env ? req.query.env : [],
-        }));
+        };
       });
 
       return Promise.all(mappedPolygonsPromises).then((polygons) =>
@@ -463,12 +464,9 @@ const updatePolygon = (req, res) => {
     };
 
     const query = `
-      UPDATE
-      ??
-      SET
-      ?
-      WHERE
-      ?? = ?
+      UPDATE ??
+      SET ?
+      WHERE ?? = ?
     `;
 
     const values = [tableName, updatedValues, 'Id_of_poligon', id];

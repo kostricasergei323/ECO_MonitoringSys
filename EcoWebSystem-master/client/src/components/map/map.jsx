@@ -14,7 +14,7 @@ import {
   RADIATION_POINTS_URL,
 } from '../../utils/constants';
 
-import { get } from '../../utils/httpService';
+import { useGet } from '../../utils/httpService';
 import {
   POLYGONS_URL,
   POINTS_URL,
@@ -46,6 +46,7 @@ import './map.css';
 import { EnvironmentsInfoContext } from '../context/environmentsInfoContext';
 import { useContext } from 'react';
 import { useRef } from 'react';
+import { LoaderContext } from '../context/loaderContext';
 
 const RADIATION_ENV_ID = 7;
 
@@ -141,6 +142,10 @@ const comparebuttonText = (geographicalObj, isModeEnabled) =>
   isModeEnabled ? `Виключити обрання маркерів` : `Обрати ${geographicalObj} `;
 
 export const MapView = ({ user }) => {
+  const get = useGet();
+
+  const { isLoading, loadingText } = useContext(LoaderContext);
+
   const [SettingsShow, SetSettingsShow] = useState(false);
 
   const [filteredItems, setFilteredItems] = useState(
@@ -217,7 +222,6 @@ export const MapView = ({ user }) => {
   const [mapMode, setmapMode] = useState(initialState.mapMode);
 
   // tubes
-
   const [filteredTubes, setFilteredTubes] = useState(initialState.tubes);
 
   const [isAddTubeMode, setisAddTubeMode] = useState(
@@ -231,7 +235,6 @@ export const MapView = ({ user }) => {
   );
 
   // type of ownership
-
   const [uniqueObjectTypes, setuniqueObjectTypes] = useState(
     initialState.uniqueObjectTypes
   );
@@ -260,7 +263,6 @@ export const MapView = ({ user }) => {
   );
 
   //side filtrations
-
   const [sideLeftFilterOpened, setLeftFilterOpened] = useState(
     initialState.sideLeftFilterOpened
   );
@@ -272,8 +274,10 @@ export const MapView = ({ user }) => {
   const fetchPoints = () => {
     get(`${POINTS_URL}?idEnvironment=${environmentsInfo.selected.id}`).then(
       ({ data }) => {
+        isLoading.current = false;
+        loadingText.current = '';
         setFilteredPoints(data);
-        setuniqueObjectTypes([]);
+        //setuniqueObjectTypes([]); Why is this here?
         setuniqueObjectTypes(
           removeDuplicates(
             data.map((el) => {
@@ -291,6 +295,8 @@ export const MapView = ({ user }) => {
 
   const fetchRadiationPoints = () => {
     get(`${RADIATION_POINTS_URL}`).then(({ data }) => {
+      isLoading.current = false;
+      loadingText.current = '';
       setRadiationPoints(data);
     });
   };
@@ -299,6 +305,8 @@ export const MapView = ({ user }) => {
     const idEnvironment = environmentsInfo.selected.id;
 
     get(`${POLYGONS_URL}?idEnvironment=${idEnvironment}`).then(({ data }) => {
+      isLoading.current = false;
+      loadingText.current = '';
       let polygons = [],
         tubes = [];
       data.forEach((el, index) => {
@@ -366,8 +374,10 @@ export const MapView = ({ user }) => {
           environmentsInfo.selected.id
         }&startDate=${ActualPointsDate[0].startDate.toISOString()}&endDate=${ActualPointsDate[0].endDate.toISOString()}`
       ).then(({ data }) => {
+        isLoading.current = false;
+        loadingText.current = '';
         setFilteredPoints(data);
-        setuniqueObjectTypes([]);
+        //setuniqueObjectTypes([]); Why is this here?
         setuniqueObjectTypes(
           removeDuplicates(
             data.map((el) => {
@@ -780,14 +790,18 @@ export const FooterMap = (props) => {
   return (
     <div ref={myRef}>
       {!changeFooter && (
-        <Navbar expand='lg' className='map-options d-flex'>
+        <Navbar
+          expand='lg'
+          className='map-options d-flex justify-content-between'
+        >
           {props.children}
         </Navbar>
       )}
       {changeFooter && (
         <Navbar
           expand='lg'
-          className='map-options d-flex justify-content-center'
+          className='map-options d-flex justify-content-between'
+          //style={{justifyContent: "space-between"}}
         >
           <FontAwesomeIcon
             icon={showFooterMenu ? faAngleDoubleDown : faAlignJustify}
@@ -867,230 +881,247 @@ const FooterComponents = ({
     }
   };
 
+  const { isLoading, loadingText } = useContext(LoaderContext);
+
   return (
     <>
-      {/*  Add point button  */}
-      {user && (
-        <Button
-          size='sm'
-          variant={isAddPointModeEnabled ? 'outline-danger' : 'outline-primary'}
-          style={{
-            marginBottom: '2px',
-            marginTop: '2px',
-            width: isAdaptive() ? '70%' : '',
-            cursor:
-              isAddPolygonModeEnabled || isCompareMode || isAddTubeMode
-                ? 'not-allowed'
-                : 'pointer',
-            pointerEvents:
-              isAddPolygonModeEnabled || isCompareMode || isAddTubeMode
-                ? 'all'
-                : 'auto',
-          }}
-          disabled={isAddPolygonModeEnabled || isCompareMode || isAddTubeMode}
-          onClick={() => setAddPointMode(!isAddPointModeEnabled)}
-          className='ms-3'
-        >
-          {buttonText('маркер', isAddPointModeEnabled)}
-        </Button>
-      )}
-
-      {/* Add plygon button  */}
-      {user && (
-        <Button
-          className='ms-3'
-          size='sm'
-          variant={
-            isAddPolygonModeEnabled ? 'outline-danger' : 'outline-primary'
-          }
-          style={{
-            width: isAdaptive() ? '70%' : '',
-            marginBottom: '2px',
-            marginTop: '2px',
-            cursor:
-              isAddPointModeEnabled || isCompareMode || isAddTubeMode
-                ? 'not-allowed'
-                : 'pointer',
-            pointerEvents:
-              isAddPointModeEnabled || isCompareMode || isAddTubeMode
-                ? 'all'
-                : 'auto',
-          }}
-          disabled={isAddPointModeEnabled || isCompareMode || isAddTubeMode}
-          onClick={() => setAddPolygonMode(!isAddPolygonModeEnabled)}
-        >
-          {buttonText('полігон', isAddPolygonModeEnabled)}
-        </Button>
-      )}
-
-      {isAddPolygonModeEnabled && (
-        <Button
-          style={{
-            width: isAdaptive() ? '70%' : '',
-            marginBottom: '2px',
-            marginTop: '2px',
-          }}
-          className='ms-3'
-          size='sm'
-          variant='outline-success'
-          onClick={finishPolygon}
-        >
-          Закінчити полігон
-        </Button>
-      )}
-
-      {/* Add tube button  */}
-      {user && (
-        <Button
-          className='ms-3'
-          size='sm'
-          variant={isAddTubeMode ? 'outline-danger' : 'outline-primary'}
-          style={{
-            width: isAdaptive() ? '70%' : '',
-            marginBottom: '2px',
-            marginTop: '2px',
-            cursor:
-              isAddPointModeEnabled || isCompareMode || isAddPolygonModeEnabled
-                ? 'not-allowed'
-                : 'pointer',
-            pointerEvents:
-              isAddPointModeEnabled || isCompareMode || isAddPolygonModeEnabled
-                ? 'all'
-                : 'auto',
-          }}
-          disabled={
-            isAddPointModeEnabled || isCompareMode || isAddPolygonModeEnabled
-          }
-          onClick={() => setisAddTubeMode(!isAddTubeMode)}
-        >
-          {buttonText('трубу', isAddTubeMode)}
-        </Button>
-      )}
-
-      {isAddTubeMode && (
-        <Button
-          style={{
-            width: isAdaptive() ? '70%' : '',
-            marginBottom: '2px',
-            marginTop: '2px',
-          }}
-          className='ms-3'
-          size='sm'
-          variant='outline-success'
-          onClick={finishTube}
-        >
-          Закінчити трубу
-        </Button>
-      )}
-
-      {isCompareMode && (
-        <Button
-          style={{
-            width: isAdaptive() ? '70%' : '',
-            marginBottom: '2px',
-            marginTop: '2px',
-          }}
-          className='ms-3'
-          size='sm'
-          variant='outline-success'
-          onClick={finishCompare}
-        >
-          Порівняти точки
-        </Button>
-      )}
-
-      {/*  Compare some  */}
-      <Button
-        className='ms-3'
-        size='sm'
-        variant={'outline-primary'}
-        style={{
-          width: isAdaptive() ? '70%' : '',
-          marginBottom: '2px',
-          marginTop: '2px',
-          cursor:
-            isAddPolygonModeEnabled ||
-            isAddPointModeEnabled ||
-            isCompareMode ||
-            isAddTubeMode
-              ? 'not-allowed'
-              : 'pointer',
-          pointerEvents:
-            isAddPolygonModeEnabled ||
-            isAddPointModeEnabled ||
-            isCompareMode ||
-            isAddTubeMode
-              ? 'all'
-              : 'auto',
-        }}
-        disabled={
-          isAddPolygonModeEnabled ||
-          isAddPointModeEnabled ||
-          isCompareMode ||
-          isAddTubeMode
-        }
-        onClick={() => setcompareModalForm(true)}
-      >
-        Результати порівняння
-      </Button>
-
-      <CompareModal
-        style={{
-          width: isAdaptive() ? '70%' : '',
-          marginBottom: '2px',
-          marginTop: '2px',
-        }}
-        points={comparePointsId}
-        polygons={comparePolygonsId}
-        show={compareModalForm}
-        onHide={() => setcompareModalForm(false)}
-      />
-
-      {/*  Add radiation point button  */}
-      {user &&
-        user.id_of_expert === 2 &&
-        environmentsInfo.selected &&
-        environmentsInfo.selected.id === RADIATION_ENV_ID && (
+      <div>
+        {/*  Add point button  */}
+        {user && (
           <Button
             size='sm'
             variant={
-              isAddRadiationPointModeEnabled
-                ? 'outline-danger'
-                : 'outline-primary'
+              isAddPointModeEnabled ? 'outline-danger' : 'outline-primary'
             }
             style={{
               marginBottom: '2px',
               marginTop: '2px',
               width: isAdaptive() ? '70%' : '',
               cursor:
-                isAddPolygonModeEnabled ||
-                isCompareMode ||
-                isAddTubeMode ||
-                isAddPointModeEnabled
+                isAddPolygonModeEnabled || isCompareMode || isAddTubeMode
                   ? 'not-allowed'
                   : 'pointer',
               pointerEvents:
-                isAddPolygonModeEnabled ||
+                isAddPolygonModeEnabled || isCompareMode || isAddTubeMode
+                  ? 'all'
+                  : 'auto',
+            }}
+            disabled={isAddPolygonModeEnabled || isCompareMode || isAddTubeMode}
+            onClick={() => setAddPointMode(!isAddPointModeEnabled)}
+            className='ms-3'
+          >
+            {buttonText('маркер', isAddPointModeEnabled)}
+          </Button>
+        )}
+
+        {/* Add plygon button  */}
+        {user && (
+          <Button
+            className='ms-3'
+            size='sm'
+            variant={
+              isAddPolygonModeEnabled ? 'outline-danger' : 'outline-primary'
+            }
+            style={{
+              width: isAdaptive() ? '70%' : '',
+              marginBottom: '2px',
+              marginTop: '2px',
+              cursor:
+                isAddPointModeEnabled || isCompareMode || isAddTubeMode
+                  ? 'not-allowed'
+                  : 'pointer',
+              pointerEvents:
+                isAddPointModeEnabled || isCompareMode || isAddTubeMode
+                  ? 'all'
+                  : 'auto',
+            }}
+            disabled={isAddPointModeEnabled || isCompareMode || isAddTubeMode}
+            onClick={() => setAddPolygonMode(!isAddPolygonModeEnabled)}
+          >
+            {buttonText('полігон', isAddPolygonModeEnabled)}
+          </Button>
+        )}
+
+        {isAddPolygonModeEnabled && (
+          <Button
+            style={{
+              width: isAdaptive() ? '70%' : '',
+              marginBottom: '2px',
+              marginTop: '2px',
+            }}
+            className='ms-3'
+            size='sm'
+            variant='outline-success'
+            onClick={finishPolygon}
+          >
+            Закінчити полігон
+          </Button>
+        )}
+
+        {/* Add tube button  */}
+        {user && (
+          <Button
+            className='ms-3'
+            size='sm'
+            variant={isAddTubeMode ? 'outline-danger' : 'outline-primary'}
+            style={{
+              width: isAdaptive() ? '70%' : '',
+              marginBottom: '2px',
+              marginTop: '2px',
+              cursor:
+                isAddPointModeEnabled ||
                 isCompareMode ||
-                isAddTubeMode ||
-                isAddPointModeEnabled
+                isAddPolygonModeEnabled
+                  ? 'not-allowed'
+                  : 'pointer',
+              pointerEvents:
+                isAddPointModeEnabled ||
+                isCompareMode ||
+                isAddPolygonModeEnabled
                   ? 'all'
                   : 'auto',
             }}
             disabled={
-              isAddPolygonModeEnabled ||
-              isCompareMode ||
-              isAddTubeMode ||
-              isAddPointModeEnabled
+              isAddPointModeEnabled || isCompareMode || isAddPolygonModeEnabled
             }
-            onClick={() =>
-              setAddRadiationPointMode(!isAddRadiationPointModeEnabled)
-            }
-            className='ms-3'
+            onClick={() => setisAddTubeMode(!isAddTubeMode)}
           >
-            {buttonText('радіаційний об`єкт', isAddRadiationPointModeEnabled)}
+            {buttonText('трубу', isAddTubeMode)}
           </Button>
         )}
+
+        {isAddTubeMode && (
+          <Button
+            style={{
+              width: isAdaptive() ? '70%' : '',
+              marginBottom: '2px',
+              marginTop: '2px',
+            }}
+            className='ms-3'
+            size='sm'
+            variant='outline-success'
+            onClick={finishTube}
+          >
+            Закінчити трубу
+          </Button>
+        )}
+
+        {isCompareMode && (
+          <Button
+            style={{
+              width: isAdaptive() ? '70%' : '',
+              marginBottom: '2px',
+              marginTop: '2px',
+            }}
+            className='ms-3'
+            size='sm'
+            variant='outline-success'
+            onClick={finishCompare}
+          >
+            Порівняти точки
+          </Button>
+        )}
+
+        {/*  Compare some  */}
+        <Button
+          className='ms-3'
+          size='sm'
+          variant={'outline-primary'}
+          style={{
+            width: isAdaptive() ? '70%' : '',
+            marginBottom: '2px',
+            marginTop: '2px',
+            cursor:
+              isAddPolygonModeEnabled ||
+              isAddPointModeEnabled ||
+              isCompareMode ||
+              isAddTubeMode
+                ? 'not-allowed'
+                : 'pointer',
+            pointerEvents:
+              isAddPolygonModeEnabled ||
+              isAddPointModeEnabled ||
+              isCompareMode ||
+              isAddTubeMode
+                ? 'all'
+                : 'auto',
+          }}
+          disabled={
+            isAddPolygonModeEnabled ||
+            isAddPointModeEnabled ||
+            isCompareMode ||
+            isAddTubeMode
+          }
+          onClick={() => setcompareModalForm(true)}
+        >
+          Результати порівняння
+        </Button>
+
+        <CompareModal
+          style={{
+            width: isAdaptive() ? '70%' : '',
+            marginBottom: '2px',
+            marginTop: '2px',
+          }}
+          points={comparePointsId}
+          polygons={comparePolygonsId}
+          show={compareModalForm}
+          onHide={() => setcompareModalForm(false)}
+        />
+
+        {/*  Add radiation point button  */}
+        {user &&
+          user.id_of_expert === 2 &&
+          environmentsInfo.selected &&
+          environmentsInfo.selected.id === RADIATION_ENV_ID && (
+            <Button
+              size='sm'
+              variant={
+                isAddRadiationPointModeEnabled
+                  ? 'outline-danger'
+                  : 'outline-primary'
+              }
+              style={{
+                marginBottom: '2px',
+                marginTop: '2px',
+                width: isAdaptive() ? '70%' : '',
+                cursor:
+                  isAddPolygonModeEnabled ||
+                  isCompareMode ||
+                  isAddTubeMode ||
+                  isAddPointModeEnabled
+                    ? 'not-allowed'
+                    : 'pointer',
+                pointerEvents:
+                  isAddPolygonModeEnabled ||
+                  isCompareMode ||
+                  isAddTubeMode ||
+                  isAddPointModeEnabled
+                    ? 'all'
+                    : 'auto',
+              }}
+              disabled={
+                isAddPolygonModeEnabled ||
+                isCompareMode ||
+                isAddTubeMode ||
+                isAddPointModeEnabled
+              }
+              onClick={() =>
+                setAddRadiationPointMode(!isAddRadiationPointModeEnabled)
+              }
+              className='ms-3'
+            >
+              {buttonText('радіаційний об`єкт', isAddRadiationPointModeEnabled)}
+            </Button>
+          )}
+      </div>
+      <div>
+        {isLoading.current && (
+          <p style={{ font: '700 20px Arial', color: 'red' }}>
+            {loadingText.current}
+          </p>
+        )}
+      </div>
     </>
   );
 };

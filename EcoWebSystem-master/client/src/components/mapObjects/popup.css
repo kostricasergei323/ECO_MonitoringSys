@@ -40,15 +40,16 @@
 
 .emissions-table td,
 th {
-  max-width: 70px;
+  max-width: fit-content;
   white-space: nowrap;
   overflow: hidden;
+  text-align: center;
   text-overflow: ellipsis;
 }
 
 .leaflet-popup-content-wrapper {
   min-width: 120px;
-  max-width: 500px;
+  max-width: fit-content;
 }
 
 .centered-text {

@@ -1,22 +1,22 @@
 .emissions td,
 th {
-  max-width: 80px;
+  max-width: fit-content;
   min-width: 40px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.emissions-inner-table td th{
-  max-width: 80px;
+.emissions-inner-table td th {
+  max-width: fit-content;
   min-width: 40px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.emissions-inner-table th{
-  max-width: 80px;
+.emissions-inner-table th {
+  max-width: fit-content;
   min-width: 40px;
   white-space: nowrap;
   overflow: hidden;
@@ -28,7 +28,7 @@ th {
   background: #fff;
 }
 
-.emission-table-wraper{
+.emission-table-wraper {
   overflow: scroll;
   max-height: 400px;
 }

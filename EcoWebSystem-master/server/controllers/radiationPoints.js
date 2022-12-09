@@ -17,26 +17,12 @@ const getPoints = async (req, res) => {
         owner_type as owner_type_id, 
         owner_types.type as owner_type_name,
         user.id_of_expert
-    FROM
-        radiation_poi_calculation
-    INNER JOIN
-        poi
-    ON
-        radiation_poi_calculation.idPoi = poi.Id
-    INNER JOIN
-        type_of_object
-    ON 
-        poi.Type = type_of_object.id
-    INNER JOIN 
-        owner_types 
-    ON 
-        poi.owner_type = owner_types.id
-    INNER JOIN 
-        user 
-    ON 
-        poi.id_of_user = user.id_of_user
-    GROUP BY poi.Id
-    ;`;
+    FROM radiation_poi_calculation
+    INNER JOIN poi ON radiation_poi_calculation.idPoi = poi.Id
+    INNER JOIN type_of_object ON poi.Type = type_of_object.id
+    INNER JOIN owner_types ON poi.owner_type = owner_types.id
+    INNER JOIN user ON poi.id_of_user = user.id_of_user
+    GROUP BY poi.Id;`;
 
   const pointsPromise = new Promise((resolve, reject) => {
     pool.query(query, (error, rows) => {
@@ -49,8 +35,10 @@ const getPoints = async (req, res) => {
     });
   });
   try {
-    const points = await pointsPromise;
-    const iconsMap = await iconsMapPromise;
+    const [points, iconsMap] = await Promise.all([
+      pointsPromise,
+      iconsMapPromise,
+    ]);
     const mapped = points.map(
       ({
         Id,

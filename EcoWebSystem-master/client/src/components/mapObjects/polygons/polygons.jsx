@@ -16,7 +16,6 @@ const initialState = {
   CorArr: [],
 };
 
-
 const ReturnLastData = ({ emissions }) => {
   let arr = emissions.slice();
   if (arr.length >= 4) {
@@ -53,7 +52,7 @@ const Polygonobj = ({
   handleClick,
   setcomparePolygonId,
   isPolyggonsNonEditable,
-  EnvironmentAttachment
+  EnvironmentAttachment,
 }) => {
   const [isComapre, setCompare] = React.useState(false);
 
@@ -75,24 +74,24 @@ const Polygonobj = ({
   //   }
   // },[emmissionsStats])
 
-  useEffect(()=>{
-    if (mapMode!='region') {
+  useEffect(() => {
+    if (mapMode != 'region') {
       setemmissionsStats([]);
       setchosenemmissionsStats(null);
     }
-  },[mapMode])
+  }, [mapMode]);
 
   const ChoosePolygon = (id) => {
     setcomparePolygonId({ id, isComapre });
   };
 
   // const CheckColor = ()=>{
-    
+
   //   if(chosenemmissionsStats && chosenemmissionsStats.color && mapMode=='region' ){
   //     return chosenemmissionsStats.color;
   //   }else if(
-  //     !chosenemmissionsStats && 
-  //     emmissionsStats && 
+  //     !chosenemmissionsStats &&
+  //     emmissionsStats &&
   //     emmissionsStats.length===0 &&
   //     mapMode=='region'
   //   ){
@@ -103,14 +102,18 @@ const Polygonobj = ({
   //   }
   // }
 
-  if (polygonPoints && polygonPoints.length>0) {
+  if (polygonPoints && polygonPoints.length > 0) {
     return (
       <Polygon
         positions={polygonPoints}
         weight={lineThickness}
-        color={`rgba(${brushColorR}, ${brushColorG}, ${brushColorB}, 1)`/*"grey"CheckColor()*/}
+        color={
+          `rgba(${brushColorR}, ${brushColorG}, ${brushColorB}, 1)` /*"grey"CheckColor()*/
+        }
       >
-        <Popup maxWidth={(window.innerWidth>=991)?"auto":window.innerWidth/1.2}>
+        <Popup
+          maxWidth={window.innerWidth >= 991 ? 'auto' : window.innerWidth / 1.2}
+        >
           <FontAwesomeIcon
             icon={faBalanceScale}
             onClick={() => {
@@ -121,7 +124,7 @@ const Polygonobj = ({
               isComapre ? 'compare-pencil-icon-active' : 'compare-pencil-icon'
             }
           />
-          {sessionStorage.getItem('user')&& !isPolyggonsNonEditable && (
+          {sessionStorage.getItem('user') && !isPolyggonsNonEditable && (
             <FontAwesomeIcon
               icon={faPencilAlt}
               onClick={() => handleClick(poligonId)}
@@ -142,8 +145,14 @@ const Polygonobj = ({
           </div>
           {emissions && emissions.length > 0 && (
             <>
-              <div className="emissions-container">
-                <Table striped bordered hover size='sm' className='emissions-table'>
+              <div className='emissions-container'>
+                <Table
+                  striped
+                  bordered
+                  hover
+                  size='sm'
+                  className='emissions-table'
+                >
                   <thead>
                     <tr>
                       <th title='Хімічний елемент'>Хімічний елемент</th>
@@ -160,9 +169,7 @@ const Polygonobj = ({
                   </tbody>
                 </Table>
               </div>
-              <Button 
-                size='sm' 
-                onClick={() => setModalShow(true)}>
+              <Button size='sm' onClick={() => setModalShow(true)}>
                 Відобразити графіки викидів
               </Button>
               <EmissionsChartModal
@@ -174,28 +181,33 @@ const Polygonobj = ({
               />
             </>
           )}
-          {(chosenemmissionsStats)? (
-            <DropdownButton style={{marginTop: 5}} size='sm' title="Оберіть забрудення">
-              {emmissionsStats.map((el,i)=>{
+          {chosenemmissionsStats ? (
+            <DropdownButton
+              style={{ marginTop: 5 }}
+              size='sm'
+              title='Оберіть забруднення'
+            >
+              {emmissionsStats.map((el, i) => {
                 return (
-                  <Dropdown.Item 
-                    key={el.short_name+i}
-                    onClick={()=>{
+                  <Dropdown.Item
+                    key={el.short_name + i}
+                    onClick={() => {
                       setchosenemmissionsStats(el);
                     }}
                   >
                     {el.short_name}
                   </Dropdown.Item>
-                )
+                );
               })}
             </DropdownButton>
-          ):(<></>)}
+          ) : (
+            <></>
+          )}
         </Popup>
       </Polygon>
     );
-  }
-  else{
-    return (<></>);
+  } else {
+    return <></>;
   }
 };
 
@@ -286,11 +298,11 @@ export const Polygons = ({
     setIsEditPolygonMode(true);
     setShowPolygonModal(true);
   };
-  
+
   const { environmentsInfo, setEnvironmentsInfo } = React.useContext(
     EnvironmentsInfoContext
   );
-  
+
   return (
     <>
       {polygons.map(
@@ -307,29 +319,36 @@ export const Polygons = ({
             lineThickness,
             idEnvironment,
             type,
-            Environments
+            Environments,
           },
           index
         ) => {
-          if((idEnvironment === (environmentsInfo.selected ? environmentsInfo.selected.id : -1) || type == "region") || Environments){
-            return (<Polygonobj
-              key={'poligonId' + index}
-              poligonId={poligonId}
-              polygonPoints={polygonPoints}
-              lineThickness={lineThickness}
-              brushColorR={brushColorR}
-              brushColorG={brushColorG}
-              brushColorB={brushColorB}
-              emissions={emissions}
-              name={name}
-              PointsInfo={PointsInfo}
-              user_name={user_name}
-              handleClick={handleClick}
-              mapMode={mapMode}
-              setcomparePolygonId={setcomparePolygonId}
-              isPolyggonsNonEditable={isPolyggonsNonEditable}
-              EnvironmentAttachment={Environments}
-            />)
+          if (
+            idEnvironment ===
+              (environmentsInfo.selected ? environmentsInfo.selected.id : -1) ||
+            type == 'region' ||
+            Environments
+          ) {
+            return (
+              <Polygonobj
+                key={'poligonId' + index}
+                poligonId={poligonId}
+                polygonPoints={polygonPoints}
+                lineThickness={lineThickness}
+                brushColorR={brushColorR}
+                brushColorG={brushColorG}
+                brushColorB={brushColorB}
+                emissions={emissions}
+                name={name}
+                PointsInfo={PointsInfo}
+                user_name={user_name}
+                handleClick={handleClick}
+                mapMode={mapMode}
+                setcomparePolygonId={setcomparePolygonId}
+                isPolyggonsNonEditable={isPolyggonsNonEditable}
+                EnvironmentAttachment={Environments}
+              />
+            );
           }
         }
       )}

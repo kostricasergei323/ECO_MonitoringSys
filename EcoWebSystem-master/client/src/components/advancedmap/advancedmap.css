@@ -1,83 +1,83 @@
-.advancedForm{
-    display: flex;
-    flex-direction: column;
+.advancedForm {
+  display: flex;
+  flex-direction: column;
 }
 
-.checkbox-list{
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
+.checkbox-list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
 }
 
-.checkWrap{
-    margin: 5px 10px;
+.checkWrap {
+  margin: 5px 10px;
 }
 
-.upsideButton{
-    transition: 0.5s;
-    display: block;
-    position: absolute;
-    width: 50%;
-    height: 20px;
-    z-index: 998;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #fff;
-    border: solid 3px grey; 
-    border-top: none;
-    border-bottom-left-radius: 20px;
-    border-bottom-right-radius: 20px;
+.upsideButton {
+  transition: 0.5s;
+  display: block;
+  position: absolute;
+  width: 50%;
+  height: 20px;
+  z-index: 998;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #fff;
+  border: solid 3px grey;
+  border-top: none;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
 }
 
-.upsideButton:hover{
-    height: 25px;
+.upsideButton:hover {
+  height: 25px;
 }
 
-.WarningAlert{
-    position: absolute;
-    display: flex;
-    padding: 10px;
-    top: 50%;
-    left: 50%;
-    transition: 1s;
-    z-index: -1;
-    min-width: 200px;
-    min-height: 100px;
-    border-radius: 20px;
-    border: 2px solid rgb(136, 1, 1);
-    background-color: rgba(190, 23, 23, 0.9);
-    transform: translate(-50%);
-    opacity: 0;
-    box-shadow: 0 0 10px black;
+.WarningAlert {
+  position: absolute;
+  display: flex;
+  padding: 10px;
+  top: 50%;
+  left: 50%;
+  transition: 1s;
+  z-index: -1;
+  min-width: 200px;
+  min-height: 100px;
+  border-radius: 20px;
+  border: 2px solid rgb(136, 1, 1);
+  background-color: rgba(190, 23, 23, 0.9);
+  transform: translate(-50%);
+  opacity: 0;
+  box-shadow: 0 0 10px black;
 }
 
-.WarningAlert b{
-    margin: auto;
+.WarningAlert b {
+  margin: auto;
 }
 
-.showWarning{
-    opacity: 1;
-    z-index: 99999;
+.showWarning {
+  opacity: 1;
+  z-index: 99999;
 }
 
-.BlackMapWarning{
-    position: absolute;
-    display: flex;
-    width: 100%;
-    height: 100%;
-    z-index: 997;
-    background-color: rgba(0, 0, 0, 0.5);
+.BlackMapWarning {
+  position: absolute;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  z-index: 997;
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
-.BlackMapWarning *{
-    max-width: 90%;
-    margin: auto;
+.BlackMapWarning * {
+  max-width: 90%;
+  margin: auto;
 }
 
-.SpinerWraper{
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    margin-bottom: 10px;
+.SpinerWraper {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin-bottom: 10px;
 }
